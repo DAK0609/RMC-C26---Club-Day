@@ -1,0 +1,9 @@
+<!-- Ring The Right Thing: ring toss on a cone target -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="#111" stroke-width="4" stroke-linejoin="round">
+  <ellipse cx="60" cy="102" rx="40" ry="9" fill="#FFE4EC"/>
+  <path d="M60 14L88 100H32z" fill="#96E4FA"/>
+  <ellipse cx="60" cy="78" rx="26" ry="8" fill="none" stroke-width="10"/>
+  <ellipse cx="60" cy="78" rx="26" ry="8" fill="none" stroke="#FE9DC0" stroke-width="4"/>
+  <ellipse cx="94" cy="34" rx="16" ry="6" fill="none" stroke-width="9" transform="rotate(-25 94 34)"/>
+  <ellipse cx="94" cy="34" rx="16" ry="6" fill="none" stroke="#F8E878" stroke-width="3.5" transform="rotate(-25 94 34)"/>
+</svg>

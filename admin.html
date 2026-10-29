@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mind Club — Quản lý</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin">
+  <h1>Trang quản lý</h1>
+  <p id="status"></p>
+  <button id="finish">Finish</button>
+
+  <section id="prize" hidden>
+    <h2>Trao quà</h2>
+    <p>Đang mời: <strong id="winner"></strong></p>
+    <button id="given">Đã trao quà</button>
+    <button id="skip" class="secondary">Bỏ qua</button>
+  </section>
+
+  <section>
+    <h2>Người chơi</h2>
+    <table>
+      <thead><tr><th>#</th><th>Biệt danh</th><th>G1</th><th>G2</th><th>G3</th><th>Tổng</th><th></th></tr></thead>
+      <tbody id="players"></tbody>
+    </table>
+  </section>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mind Club</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="player">
+  <!-- Screen 1: Welcome -->
+  <section id="welcome" class="screen" hidden>
+    <h1>Hello, welcome to Mind Club! 👋</h1>
+    <p>You'll take on 3 challenges. After each one, enter the number the game host tells you.
+       Finish all 3 to discover which virtual pet is waiting for you!</p>
+    <p>🏆 Keep an eye on the leaderboard and come back to the Mind Club booth at 3:45 PM to claim
+       your prize if you're the winner! If the winner isn't there, the prize goes to the next player in line.</p>
+    <form id="welcome-form">
+      <input id="nickname" placeholder="Your nickname" maxlength="20" required>
+      <button>Start</button>
+    </form>
+    <dialog id="taken">
+      <p>⚠️ This username has been taken. Please choose another one.</p>
+      <form method="dialog"><button>OK</button></form>
+    </dialog>
+  </section>
+
+  <!-- Screen 2: Results -->
+  <section id="results" class="screen" hidden>
+    <h2>Your challenges</h2>
+    <p class="hint">Tap a game after you play it and enter the number your game host tells you.</p>
+    <div id="game-cards" class="game-cards"></div>
+    <div id="confirm" class="card" hidden>
+      <p id="summary"></p>
+      <button id="yes">Yes, show my pet!</button>
+      <button id="edit" class="secondary">Edit</button>
+    </div>
+
+    <dialog id="game-dialog">
+      <form id="game-form" novalidate>
+        <img id="gd-img" class="game-img" alt="">
+        <h3 id="gd-title"></h3>
+        <p id="gd-question"></p>
+        <div class="stepper">
+          <button type="button" id="gd-minus" class="secondary" aria-label="Decrease">−</button>
+          <input id="gd-input" type="number" inputmode="numeric" min="0" step="1" aria-labelledby="gd-question">
+          <button type="button" id="gd-plus" class="secondary" aria-label="Increase">+</button>
+        </div>
+        <p id="gd-error" class="error" hidden></p>
+        <button>Save</button>
+        <button type="button" id="gd-cancel" class="secondary">Cancel</button>
+      </form>
+    </dialog>
+  </section>
+
+  <!-- Screen 3: Pet -->
+  <section id="pet" class="screen" hidden>
+    <img id="pet-img" alt="">
+    <h2 id="pet-name"></h2>
+    <p id="pet-text"></p>
+    <p class="reminder">🏆 Reminder: The #1 player will receive a prize at 3:45 PM at the Mind Club booth. Don't miss it!</p>
+    <div id="final" class="banner" hidden></div>
+  </section>
+
+  <script type="module" src="js/player.js"></script>
+</body>
+</html>

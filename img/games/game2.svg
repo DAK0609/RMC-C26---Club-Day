@@ -1,0 +1,12 @@
+<!-- The Skillful Hand: chopsticks picking marbles from a bowl -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="#111" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+  <line x1="98" y1="10" x2="58" y2="56" stroke-width="9"/>
+  <line x1="98" y1="10" x2="58" y2="56" stroke="#F8E878" stroke-width="3"/>
+  <line x1="110" y1="20" x2="66" y2="60" stroke-width="9"/>
+  <line x1="110" y1="20" x2="66" y2="60" stroke="#F8E878" stroke-width="3"/>
+  <circle cx="62" cy="60" r="8" fill="#F58E89"/>
+  <circle cx="34" cy="70" r="8" fill="#96E4FA"/>
+  <circle cx="50" cy="74" r="8" fill="#F8E878"/>
+  <circle cx="80" cy="74" r="8" fill="#FE9DC0"/>
+  <path d="M14 76h92c0 22-20 34-46 34S14 98 14 76z" fill="#FFE4EC"/>
+</svg>

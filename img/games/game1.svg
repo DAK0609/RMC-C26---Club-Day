@@ -1,0 +1,10 @@
+<!-- A Little In Common: two A/B answer cards -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" stroke="#111" stroke-width="4" stroke-linejoin="round">
+  <rect x="14" y="26" width="48" height="66" rx="8" fill="#FE9DC0" transform="rotate(-12 38 59)"/>
+  <rect x="58" y="26" width="48" height="66" rx="8" fill="#96E4FA" transform="rotate(12 82 59)"/>
+  <g font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="34" fill="#fff" stroke-width="3" paint-order="stroke" text-anchor="middle">
+    <text x="36" y="72" transform="rotate(-12 38 59)">A</text>
+    <text x="84" y="72" transform="rotate(12 82 59)">B</text>
+  </g>
+  <path d="M60 14l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#F8E878" stroke-width="2.5"/>
+</svg>
