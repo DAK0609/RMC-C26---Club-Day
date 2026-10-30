@@ -6,33 +6,37 @@ import { db } from './api.js';
 // comes back online, and every `pollMs` as a safety net.
 // Runs never overlap: a burst of events during a run causes exactly one more run.
 // `onConnection(ok)` is told whether the page is currently up to date.
-// Returns `run`, so a page can refresh right after its own actions.
+// Returns `run`, so a page can refresh right after its own actions. `await run()`
+// always waits for a refresh that started after the call, so the page never
+// re-enables buttons on data from before the action.
 export function keepFresh(refresh, { tables, pollMs = 30_000, onConnection = () => {} }) {
-  let running = false;
-  let again = false;
+  let current = null; // the refresh in progress
+  let queued = null;  // the one extra refresh waiting for it
   let live = null; // null = still connecting, which isn't reported as a problem
   let fetchOk = true;
   const report = () => onConnection(live !== false && fetchOk);
 
-  async function run() {
-    if (running) {
-      again = true;
-      return;
+  function run() {
+    if (queued) return queued;
+    if (current) {
+      queued = current.then(() => {
+        queued = null;
+        return run();
+      });
+      return queued;
     }
-    running = true;
-    try {
-      await refresh();
-      fetchOk = true;
-    } catch (err) {
-      console.error(err);
-      fetchOk = false;
-    }
-    running = false;
-    report();
-    if (again) {
-      again = false;
-      run();
-    }
+    current = (async () => {
+      try {
+        await refresh();
+        fetchOk = true;
+      } catch (err) {
+        console.error(err);
+        fetchOk = false;
+      }
+      current = null;
+      report();
+    })();
+    return current;
   }
 
   const channel = db.channel(`sync:${tables.join(',')}`);

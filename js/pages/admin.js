@@ -2,6 +2,7 @@
 import * as api from '../api.js';
 import { keepFresh } from '../live.js';
 import { $, el, busy, connectionBanner } from '../ui.js';
+import { COPY } from '../copy.js';
 
 let state = null;
 let winner = null; // the leaderboard row currently invited to claim the prize
@@ -11,7 +12,7 @@ async function refresh() {
   state = s;
   winner = ranked.find((r) => r.rank === s.winner_rank) ?? null;
   renderStatus(ranked.length, joined);
-  renderPrize();
+  renderPrize(ranked);
   renderPlayers(ranked);
 }
 
@@ -25,16 +26,24 @@ function renderStatus(confirmed, joined) {
   $('reopen').hidden = !state.finished;
 }
 
-function renderPrize() {
+function renderPrize(ranked) {
+  const prize = api.currentPrize(state);
   $('prize').hidden = !state.finished;
-  $('winner').textContent = !winner ? 'No more players in line'
-    : `#${winner.rank} ${winner.nickname}` + (state.prize_given ? ' (prize given)' : '');
-  $('given').disabled = $('skip').disabled = state.prize_given || !winner;
+  $('now').hidden = !prize;
+  $('done').hidden = !!prize;
+  if (prize) $('place').textContent = `${COPY.place(prize)} prize`;
+  $('winner').textContent = winner ? `#${winner.rank} ${winner.nickname}` : 'No more players in line';
+  $('given').disabled = $('skip').disabled = !prize || !winner;
+
+  const names = new Map(ranked.map((r) => [r.id, r.nickname]));
+  $('winners').replaceChildren(...state.winners.map((id, i) =>
+    el('li', '', `${COPY.place(i + 1)} prize: ${names.get(id) ?? '(removed player)'}`)));
 }
 
 function renderPlayers(ranked) {
   $('players').replaceChildren(...ranked.map((r) => {
-    const tr = el('tr', r.rank === state.winner_rank && state.finished ? 'current' : '');
+    const invited = state.finished && api.currentPrize(state) && r.rank === state.winner_rank;
+    const tr = el('tr', invited ? 'current' : '');
     for (const v of [r.rank, r.nickname, r.g1, r.g2, r.g3, r.total]) tr.append(el('td', '', v));
     const remove = el('button', 'secondary', 'Remove');
     action(remove, () => api.removePlayer(r.id),
@@ -69,10 +78,10 @@ action($('finish'), api.finishEvent,
   'Finish now? The ranking locks and players can no longer submit results.');
 action($('reopen'), api.reopenEvent,
   'Reopen? Players can submit again and the prize handout restarts from #1.');
-action($('given'), api.markPrizeGiven,
-  () => `Confirm the prize was given to ${winner?.nickname}?`);
+action($('given'), () => api.givePrize(state, winner.id),
+  () => `Confirm the ${COPY.place(api.currentPrize(state))} prize was given to ${winner?.nickname}?`);
 action($('skip'), () => api.skipWinner(state.winner_rank),
-  () => `Skip ${winner?.nickname}? The prize moves to the next player in line.`);
+  () => `Skip ${winner?.nickname}? The ${COPY.place(api.currentPrize(state))} prize moves to the next player in line.`);
 
 const run = keepFresh(refresh, {
   tables: ['players', 'event_state'],

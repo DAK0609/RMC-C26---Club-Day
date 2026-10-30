@@ -90,14 +90,14 @@ def get_state():
 
 
 def restore_state(original):
-    set_state({k: original[k] for k in ('finished', 'winner_rank', 'prize_given')})
+    set_state({k: original[k] for k in ('finished', 'winner_rank', 'winners')})
 
 
 def main():
     refuse_if_real_players()
     original = get_state()
     cleanup()
-    set_state({'finished': False, 'winner_rank': 1, 'prize_given': False})
+    set_state({'finished': False, 'winner_rank': 1, 'winners': []})
     try:
         run_checks()
     finally:
@@ -164,11 +164,12 @@ def run_checks():
     s, _ = call('DELETE', f'/players?id=eq.{c}')
     check('Remove deletes a player and everyone below moves up',
           s == 200 and board() == [(1, 'A', 80), (2, 'B', 70)], board())
-    rows = set_state({'prize_given': True})
-    check('Prize given is saved', rows[0]['prize_given'] is True, rows)
+    given = call('PATCH', '/event_state?id=eq.1&winner_rank=eq.2', {'winner_rank': 3, 'winners': [b]})[1]
+    check('Prize given records the winner and invites the next rank',
+          given and given[0]['winners'] == [b] and given[0]['winner_rank'] == 3, given)
 
     # --- Reopen ---
-    set_state({'finished': False, 'winner_rank': 1, 'prize_given': False})
+    set_state({'finished': False, 'winner_rank': 1, 'winners': []})
     s, rows = patch(d, {'g1': 1})
     check('after Reopen: saving works again', s == 200 and rows and rows[0]['g1'] == 1, rows)
 

@@ -1,5 +1,5 @@
 """Plays a whole event in a real (headless) browser against the real database:
-player flow, live leaderboard, Finish, Skip, Prize given, Remove, Reopen.
+player flow, live leaderboard, Finish, Skip, 3 prizes given, Remove, Reopen.
 
     python -m http.server 8000          # in one terminal, from the project folder
     python tests/browser_test.py        # in another
@@ -36,7 +36,9 @@ async def enter(p, idx, value):
 
 
 def errors(tab):
-    return [l for l in tab.logs if l.startswith('error') or l.startswith('EXCEPTION')]
+    # AssistantLoadState comes from a script Edge itself injects into pages, not from this app.
+    return [l for l in tab.logs if (l.startswith('error') or l.startswith('EXCEPTION'))
+            and 'AssistantLoadState' not in l]
 
 
 def seed():
@@ -54,7 +56,7 @@ def main():
     t.refuse_if_real_players()
     original = t.get_state()
     t.cleanup()
-    t.set_state({'finished': False, 'winner_rank': 1, 'prize_given': False})
+    t.set_state({'finished': False, 'winner_rank': 1, 'winners': []})
     try:
         asyncio.run(run(seed()))
     finally:
@@ -175,10 +177,24 @@ async def run(ids):
         report('the newly invited player (#2) sees the winner message',
                await p.wait_for(f"{g('final')}.textContent.startsWith('Congratulations')", 10) if second == 'zz_test_New' else True)
 
+        # 1st prize to #2 (since #1 was skipped), then the 2nd prize moves on to #3
         await a.wait_for(f"!{g('given')}.disabled")
         await a.js(f"{g('given')}.click()")
-        report('Prize given -> iPad thanks everyone', await b.wait_for(f"{g('claim')}.textContent.includes('awarded')", 10))
-        report('Prize given -> buttons disabled', await a.wait_for(f"{g('given')}.disabled && {g('skip')}.disabled"))
+        third = await a.js("document.querySelectorAll('#players tr')[2].children[1].textContent")
+        report(f'Prize given -> #3 ({third}) invited for the 2nd prize on the iPad',
+               await b.wait_for(f"{g('claim')}.textContent.includes('{third}') && "
+                                f"{g('claim')}.textContent.includes('2nd prize')", 10))
+        for n in (2, 3):  # 2nd and 3rd prize; wait until admin lists each one, like an organiser would
+            await a.wait_for(f"!{g('given')}.disabled && document.querySelectorAll('#winners li').length === {n - 1}")
+            await a.js(f"{g('given')}.click()")
+            report(f'Prize given -> admin lists {n} winners',
+                   await a.wait_for(f"document.querySelectorAll('#winners li').length === {n}"),
+                   (t.get_state(), await a.js(f"{g('prize')}.innerText")))
+        report('3 prizes given -> iPad thanks everyone', await b.wait_for(f"{g('claim')}.textContent.includes('awarded')", 10),
+               (t.get_state(), await a.js(f"{g('prize')}.innerText")))
+        report('3 prizes given -> buttons disabled', await a.wait_for(f"{g('given')}.disabled && {g('skip')}.disabled"))
+        report('admin lists the 3 winners in order', await a.wait_for(
+            "[...document.querySelectorAll('#winners li')].map(li => li.textContent.slice(0, 3)).join() === '1st,2nd,3rd'"))
         await a.shot(SHOTS / 'a2-admin-finished.png')
 
         before = await a.js("document.querySelectorAll('#players tr').length")

@@ -8,7 +8,10 @@ export const COPY = {
     ? 'Please enter a whole number (0 or more).'
     : `Please enter a whole number from 0 to ${max}.`),
   summary: (d) => `Game 1: ${d.g1} · Game 2: ${d.g2} · Game 3: ${d.g3} — Is this correct?`, // spec
-  winner: "Congratulations! You're #1! 🏆 Come back to the Mind Club booth to claim your prize.", // spec
+  place: (prize) => ['1st', '2nd', '3rd'][prize - 1],
+  winner: (prize) => (prize === 1
+    ? "Congratulations! You're #1! 🏆 Come back to the Mind Club booth to claim your prize." // spec
+    : `Congratulations! You won the ${COPY.place(prize)} prize! 🏆 Come back to the Mind Club booth to claim it.`),
   finishedRank: (rank) => `Thanks for playing! You finished #${rank}.`, // spec
   closed: 'Results are closed, so this entry can no longer be submitted. Thanks for playing!',
   ended: 'The game has ended. Thanks for visiting Mind Club!',
@@ -18,7 +21,7 @@ export const COPY = {
 
   // Leaderboard (iPad)
   boardEmpty: 'No players yet. Be the first!',
-  claimPrize: (name) => `🏆 ${name}, please come to the Mind Club booth to claim your prize!`,
-  prizeGiven: '🎉 The prize has been awarded. Thanks for playing!',
+  claimPrize: (name, prize) => `🏆 ${name}, please come to the Mind Club booth to claim the ${COPY.place(prize)} prize!`,
+  prizeGiven: '🎉 All 3 prizes have been awarded. Thanks for playing!',
   noMorePlayers: 'No more players in line.',
 };

@@ -64,4 +64,5 @@ Scoring and ranking are computed in the database (`players.total`, `leaderboard`
 ## Event day
 1. 8:30: run `supabase/reset.sql` in the SQL Editor.
 2. Open `leaderboard.html` on the iPad (charger on, auto-lock off).
-3. 3:45 PM: on `admin.html` press **Finish**, then **Prize given** or **Skip**.
+3. 3:45 PM: on `admin.html` press **Finish**, then hand out the 1st, 2nd and 3rd prize in order:
+   **Prize given** if the invited player is there, **Skip** if not (the next player in line moves up a prize).

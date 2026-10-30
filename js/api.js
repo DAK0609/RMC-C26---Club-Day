@@ -31,6 +31,13 @@ export async function getState() {
   return check(await db.from('event_state').select('*').eq('id', 1).single());
 }
 
+// Prizes go to 1st, 2nd and 3rd. A skipped player is passed over, so the next
+// player in line takes their prize.
+export const PRIZES = 3;
+
+// The prize being handed out now (1, 2 or 3), or null once all are given.
+export const currentPrize = (state) => (state.winners.length < PRIZES ? state.winners.length + 1 : null);
+
 // Ranked, confirmed players, rank 1 first. Pass `limit` for a top-N.
 export async function getLeaderboard(limit) {
   let query = db.from('leaderboard').select('*').order('rank');
@@ -86,13 +93,20 @@ async function setState(patch) {
 }
 
 export const finishEvent = () => setState({ finished: true });
-export const reopenEvent = () => setState({ finished: false, winner_rank: 1, prize_given: false });
-export const markPrizeGiven = () => setState({ prize_given: true });
+export const reopenEvent = () => setState({ finished: false, winner_rank: 1, winners: [] });
 
-// Moves the prize to the next rank, but only from `fromRank`: if two organisers
-// tap "Skip" at the same moment, one player is skipped, not two.
-export async function skipWinner(fromRank) {
-  return check(await db.from('event_state').update({ winner_rank: fromRank + 1 })
+// Records the current prize as given to `winnerId` and invites the next rank.
+export function givePrize(state, winnerId) {
+  return moveOn(state.winner_rank, { winners: [...state.winners, winnerId] });
+}
+
+// Invites the next rank for the same prize.
+export const skipWinner = (fromRank) => moveOn(fromRank, {});
+
+// Only moves on from `fromRank`: if two organisers tap at the same moment,
+// one player is given / skipped, not two.
+async function moveOn(fromRank, patch) {
+  return check(await db.from('event_state').update({ ...patch, winner_rank: fromRank + 1 })
     .eq('id', 1).eq('winner_rank', fromRank).select().maybeSingle());
 }
 

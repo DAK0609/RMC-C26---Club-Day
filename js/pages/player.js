@@ -186,10 +186,11 @@ function renderPet() {
   $('pet-text').textContent = pet.text;
 
   // After Finish: the player currently invited to claim the prize, or everyone else's rank.
-  const isWinner = myRank?.rank === state.winner_rank;
+  const prize = api.currentPrize(state);
+  const isWinner = prize !== null && myRank?.rank === state.winner_rank;
   $('final').hidden = !myRank;
   $('final').classList.toggle('winner', isWinner);
-  if (myRank) $('final').textContent = isWinner ? COPY.winner : COPY.finishedRank(myRank.rank);
+  if (myRank) $('final').textContent = isWinner ? COPY.winner(prize) : COPY.finishedRank(myRank.rank);
   showScreen('pet');
 }
 

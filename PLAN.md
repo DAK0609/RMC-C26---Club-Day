@@ -107,12 +107,13 @@ Full app logic on a structure meant to be built on; UI is basic.
 2. ✅ Every screen and state: loading, welcome, results (game cards + pop-up), pet, final result, "results closed", "game has ended", entry removed
 3. ✅ Admin: live stats, Finish, Reopen (undo an accidental Finish), Prize given, Skip (safe if two people tap at once), Remove, confirm boxes
 4. ✅ Anti-cheat database rules written: `supabase/migrations/002_harden_player_writes.sql` (⏳ needs running in Supabase)
-5. ✅ Automated tests: `tests/api_test.py` (24 database checks) and `tests/browser_test.py` (38 checks playing a full event in a browser) — all pass
+5. ✅ Automated tests: `tests/api_test.py` (24 database checks) and `tests/browser_test.py` (42 checks playing a full event in a browser) — all pass (30 Oct, after the 3-prize change)
+6. ✅ Three prizes (added 30 Oct): 1st, 2nd and 3rd are handed out in order. **Skip** passes the invited player over, so the next player in line moves up a prize (e.g. #1 absent → #2 gets 1st, #3 gets 2nd, #4 gets 3rd). Admin lists who got each prize. `supabase/migrations/003_three_prizes.sql` (✅ run in Supabase 30 Oct)
 
 ### Phase 2 — Branding & UI (≈4 hours) · Fri 30 – Sat 31 Oct
 1. Palette as CSS variables, Fredoka font, sticker card/button styles
 2. Player page: Tamagotchi frame, logo on top, 3 screens styled, egg-hatch reveal
-3. Leaderboard (iPad landscape): banner header, top 10, #1 highlight, animated reorder, "claim prize" banner after Finish
+3. Leaderboard (iPad landscape): banner header, top 10, #1 highlight, animated reorder, "claim the 1st / 2nd / 3rd prize" banner after Finish
 4. Admin page: clean and functional (no decoration), large buttons
 5. ✅ Pet images in `img/pets/`
 
@@ -124,7 +125,7 @@ Full app logic on a structure meant to be built on; UI is basic.
 5. ✅ Reset script: `supabase/reset.sql`
 
 ### Phase 4 — Rehearsal (≈2 hours) · Mon 2 Nov
-1. 5–10 club members on their own phones + the real iPad, run a full mock event including Finish → Skip → Prize given
+1. 5–10 club members on their own phones + the real iPad, run a full mock event including Finish → Skip → all 3 prizes given
 2. Test on iPhone Safari + Android Chrome + iPad Safari
 3. Test on venue-like conditions (mobile data, weak signal)
 4. Print the QR code (A5 standee + small stickers on each game table)
@@ -136,7 +137,7 @@ Full app logic on a structure meant to be built on; UI is basic.
 | 8:30 | Run `supabase/reset.sql` in SQL Editor, open leaderboard on iPad (charger plugged in, auto-lock off) | Tech lead |
 | 9:00–15:00 | Players scan QR, hosts read out numbers | Game admins |
 | 15:00–15:45 | Remind players to keep the page open | Sales |
-| 15:45 | Admin presses **Finish** → winner invited → **Prize given** or **Skip** | Organiser |
+| 15:45 | Admin presses **Finish** → 1st prize: invited player → **Prize given** or **Skip** → same for 2nd and 3rd prize | Organiser |
 | After | Export the players table (CSV) for the club's records | Tech lead |
 
 ---
@@ -150,12 +151,14 @@ Full app logic on a structure meant to be built on; UI is basic.
 | Player started but never submitted, then Finish happens | Show "Results are closed. Thanks for playing!" with no rank |
 | Player tries to submit after Finish | Database rejects it, page shows "Results are closed" |
 | Two players with the same nickname | Blocked with a pop-up; "Minh" and "minh " count as the same |
-| Winner skipped, next player is #2 | #2's phone updates live, iPad shows the new name |
+| Winner skipped, next player is #2 | #2 is invited for the same prize; their phone updates live, iPad shows the new name |
+| Prize given | That player is listed on admin; the next rank is invited for the next prize |
+| All 3 prizes given | Buttons disabled; iPad shows "All 3 prizes have been awarded" |
 | Everyone skipped | Admin shows "No more players", iPad shows "No more players in line" |
 | iPad refreshes | Full leaderboard reloads from the database |
 | Someone joins after Finish | "The game has ended. Thanks for visiting Mind Club!" |
 | Organiser removes a player | Everyone below moves up; that phone asks for a new nickname |
-| Organiser presses Finish by mistake | **Reopen** button: players can enter again, prize handout restarts from #1 |
+| Organiser presses Finish by mistake | **Reopen** button: players can enter again, prize handout restarts from #1 and the 1st prize |
 | Two organisers tap Skip together | Only one player is skipped |
 | Double tap on Start / Save / Yes | Button is disabled while saving, so only one entry is created |
 | Phone locked, Wi-Fi dropped | "Reconnecting…" bar; data reloads on wake-up / reconnect |
@@ -168,7 +171,7 @@ All rows above are covered by `tests/api_test.py` or `tests/browser_test.py`.
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| **Players type fake scores** (Game 2 has no maximum, so typing 99 = 940 pts) | Wrong winner gets the prize | Admin sees every player's G1/G2/G3 and can remove fakes; host checks the winner before handing over the prize |
+| **Players type fake scores** (Game 2 has no maximum, so typing 99 = 940 pts) | Wrong player gets a prize | Admin sees every player's G1/G2/G3 and can remove fakes; host checks the winner before handing over the prize |
 | Anyone opens `admin.html` | Event finished early or players deleted | Decision #2, pending team meeting |
 | Sports Hall Wi-Fi/4G is weak | Pages slow, live updates lag | Pages are tiny; realtime reconnects; leaderboard also re-fetches every 30s as a backup |
 | iPad sleeps / browser tab killed | Leaderboard disappears | Auto-lock off, charger, Guided Access mode |
@@ -193,6 +196,6 @@ All rows above are covered by `tests/api_test.py` or `tests/browser_test.py`.
 - [ ] 3 links live on GitHub Pages, QR code printed
 - [ ] Player flow works on iPhone + Android, survives closing and reopening
 - [ ] Leaderboard updates within 2s of a submit, no reload needed
-- [ ] Finish → Skip → Prize given works end-to-end on real phones
+- [ ] Finish → Skip → all 3 prizes given works end-to-end on real phones
 - [ ] Looks like Mind Club: palette, logo, Tamagotchi frame, pet stages from the banner
 - [ ] Test data wiped the morning of the event

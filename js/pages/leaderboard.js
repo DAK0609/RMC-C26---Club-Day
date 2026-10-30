@@ -8,9 +8,10 @@ const TOP = 10;
 
 async function refresh() {
   const [top, state] = await Promise.all([api.getLeaderboard(TOP), api.getState()]);
-  const winner = state.finished && !state.prize_given ? await api.getRankRow(state.winner_rank) : null;
+  const prize = api.currentPrize(state);
+  const winner = state.finished && prize ? await api.getRankRow(state.winner_rank) : null;
   renderBoard(top);
-  renderClaim(state, winner);
+  renderClaim(state, prize, winner);
 }
 
 function renderBoard(top) {
@@ -26,11 +27,11 @@ function renderBoard(top) {
   $('empty').hidden = top.length > 0;
 }
 
-function renderClaim(state, winner) {
+function renderClaim(state, prize, winner) {
   $('claim').hidden = !state.finished;
   if (!state.finished) return;
-  $('claim').textContent = state.prize_given ? COPY.prizeGiven
-    : winner ? COPY.claimPrize(winner.nickname)
+  $('claim').textContent = !prize ? COPY.prizeGiven
+    : winner ? COPY.claimPrize(winner.nickname, prize)
     : COPY.noMorePlayers;
 }
 
