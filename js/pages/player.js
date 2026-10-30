@@ -1,7 +1,7 @@
 // Player page (index.html): welcome → enter 3 games → pet → final result after Finish.
 import * as api from '../api.js';
 import { keepFresh } from '../live.js';
-import { $, el, showScreen, busy, toast, connectionBanner } from '../ui.js';
+import { $, el, showScreen, fitFirstScreens, prizeSlots, busy, toast, connectionBanner } from '../ui.js';
 import { GAMES } from '../games.js';
 import { petFor } from '../pets.js';
 import { COPY } from '../copy.js';
@@ -33,13 +33,28 @@ let state = null;    // the event_state row
 let myRank = null;   // this player's leaderboard row, once confirmed
 let top = [];        // the first MINI_TOP leaderboard rows, once confirmed
 let calling = null;  // after Finish: the leaderboard row invited for the current prize
+let winnerNames = new Map(); // after Finish: id → nickname of each prize winner
 let editing = false; // true after "Edit": hide the summary until the next save
 let current = null;  // the game open in the pop-up
+let saves = 0;       // counts this phone's saves, so an older refresh can't undo one
+let hatchNext = false; // set by "Yes": the pet hatches when it first appears
 
 const MINI_TOP = 5;
 
 async function refresh() {
+  const savesBefore = saves;
   const [p, s] = await Promise.all([playerId ? api.getPlayer(playerId) : null, api.getState()]);
+  const ranks = p?.confirmed_at ? await Promise.all([
+    api.getMyRank(p.id),
+    api.getLeaderboard(MINI_TOP),
+    s.finished && api.currentPrize(s) ? api.getRankRow(s.winner_rank) : null,
+    s.finished ? api.getNicknames(s.winners) : [],
+  ]) : [null, [], null, []];
+  // A save finished while this was loading, so the data may be from before it. Load again instead.
+  if (saves !== savesBefore) {
+    run();
+    return;
+  }
   if (playerId && !p) { // removed by the organiser, or the test data was wiped
     forgetPlayer();
     $('welcome-notice').textContent = COPY.entryRemoved;
@@ -47,11 +62,8 @@ async function refresh() {
   }
   player = p;
   state = s;
-  [myRank, top, calling] = p?.confirmed_at ? await Promise.all([
-    api.getMyRank(p.id),
-    api.getLeaderboard(MINI_TOP),
-    s.finished && api.currentPrize(s) ? api.getRankRow(s.winner_rank) : null,
-  ]) : [null, [], null];
+  [myRank, top, calling] = ranks;
+  winnerNames = new Map(ranks[3].map((r) => [r.id, r.nickname]));
   render();
 }
 
@@ -91,15 +103,23 @@ $('welcome-form').onsubmit = (e) => {
   busy($('start'), async () => {
     try {
       player = await api.createPlayer(nickname);
+      saves++;
       rememberPlayer(player.id);
       $('welcome-notice').hidden = true;
       render();
     } catch (err) {
-      if (err.code === 'NICKNAME_TAKEN') return $('taken').showModal();
+      if (err.code === 'NICKNAME_TAKEN') {
+        $('nickname').classList.add('bad');
+        return $('taken').showModal();
+      }
       handleError(err);
     }
   });
 };
+
+// After "OK" on the taken pop-up, the red box stays until the nickname is changed.
+$('taken').onclose = () => $('nickname').focus();
+$('nickname').oninput = () => $('nickname').classList.remove('bad');
 
 // ---- Screen 2: Results ----
 // Each game is saved as a draft the moment it's entered, so closing the page keeps progress.
@@ -108,32 +128,81 @@ const draft = () => ({ g1: player.g1, g2: player.g2, g3: player.g3 });
 
 function renderCards() {
   const d = draft();
-  $('game-cards').replaceChildren(...GAMES.map((g, i) => {
-    const done = d[g.key] != null;
-    const card = document.createElement('button');
-    card.type = 'button';
-    card.className = 'game-card' + (done ? ' done' : '');
-    card.innerHTML = `<img class="game-img" src="${g.img}" alt="">
-      <span class="game-label"><small>Game ${i + 1}</small>${g.name}</span>
-      <span class="game-status">${done ? '✓ ' + d[g.key] : 'Tap to enter'}</span>`;
-    card.onclick = () => openGame(g, i);
-    return card;
-  }));
+  const entered = GAMES.filter((g) => d[g.key] != null).length;
+  const ready = entered === GAMES.length && !editing;
 
-  const allDone = GAMES.every((g) => d[g.key] != null);
+  // The egg gets one crack per game entered. With all 3 in, it's big and shakes fast.
+  $('egg-svg').innerHTML = '<use href="#egg"/>' + ['crack1', 'crack2', 'crack3'].slice(0, entered)
+    .map((id) => `<use href="#${id}"/>`).join('');
+  $('egg-svg').setAttribute('aria-label', `Your egg: ${entered} of 3 games entered`);
+  $('egg-svg').classList.toggle('fast', ready);
+  $('egg-display').classList.toggle('compact', !ready);
+  $('egg-title').textContent = ready ? 'Ready to hatch!' : `${player.nickname}'s egg`;
+  $('egg-count').textContent = `${entered} of 3 games entered`;
+  [...$('egg-pips').children].forEach((pip, i) => pip.classList.toggle('on', i < entered));
+
+  $('game-cards').replaceChildren(...GAMES.map((g, i) => gameButton(g, i, d[g.key])));
+
+  // Ready: the egg and the check card fill the first screen; the games start below it.
   $('summary').textContent = COPY.summary(d);
-  $('confirm').hidden = !allDone || editing;
+  $('confirm').hidden = !ready;
+  $('results-top').classList.toggle('first-screen', ready);
+  if (!ready) {
+    $('results-top').style.minHeight = '';
+    $('results-top').querySelector('.next').hidden = true;
+  }
+  fitFirstScreens();
 }
 
+function gameButton(g, i, value) {
+  const done = value != null;
+  const button = el('button', 'game');
+  button.type = 'button';
+  button.innerHTML = `<img src="${g.img}" alt=""><span><small>Game ${i + 1}</small><strong>${g.name}</strong>`
+    + (done ? '</span>' : '<em>Tap after you play</em></span>')
+    + (done ? `<span class="lcd">${value}</span>`
+      : '<span class="lcd empty"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></span>');
+  button.setAttribute('aria-label', `Game ${i + 1}, ${g.name}: ${done ? `${value}. Tap to change.` : 'not entered yet.'}`);
+  button.onclick = () => openGame(g, i);
+  return button;
+}
+
+// Games with a maximum get one button per number (no typing, nothing out of range).
+// Game 2 has no maximum, so it keeps − / + and typing. #gd-input holds the number either way.
 function openGame(g, i) {
   current = g;
   $('gd-img').src = g.img;
-  $('gd-title').textContent = `Game ${i + 1} · ${g.name}`;
+  $('gd-num').textContent = `Game ${i + 1}`;
+  $('gd-title').textContent = g.name;
   $('gd-question').textContent = g.question;
   $('gd-input').max = g.max ?? '';
   $('gd-input').value = player[g.key] ?? '';
+  const pick = g.max != null;
+  $('gd-picker').hidden = !pick;
+  $('gd-stepper').hidden = pick;
+  $('gd-tip').hidden = pick;
+  if (pick) {
+    $('gd-picker').style.setProperty('--cols', Math.min(g.max + 1, 5));
+    $('gd-picker').replaceChildren(...Array.from({ length: g.max + 1 }, (_, n) => {
+      const b = el('button', '', String(n));
+      b.type = 'button';
+      b.setAttribute('role', 'radio');
+      b.onclick = () => {
+        $('gd-input').value = n;
+        markPicked();
+      };
+      return b;
+    }));
+    markPicked();
+  }
   $('gd-error').hidden = true;
   $('game-dialog').showModal();
+}
+
+function markPicked() {
+  for (const b of $('gd-picker').children) {
+    b.setAttribute('aria-checked', String(b.textContent === $('gd-input').value));
+  }
 }
 
 const inputValue = () => Number($('gd-input').value) || 0;
@@ -156,6 +225,7 @@ $('game-form').onsubmit = (e) => {
   busy($('gd-save'), async () => {
     try {
       player = await api.saveGame(player.id, current.key, n);
+      saves++;
       editing = false;
       $('game-dialog').close();
       render();
@@ -178,6 +248,8 @@ $('edit').onclick = () => {
 $('yes').onclick = () => busy($('yes'), async () => {
   try {
     player = await api.confirmResults(player.id, draft());
+    saves++;
+    hatchNext = true;
     render();
     run(); // loads the mini leaderboard with this player in it
   } catch (err) {
@@ -185,14 +257,21 @@ $('yes').onclick = () => busy($('yes'), async () => {
   }
 });
 
-// ---- Screen 3: Pet + mini leaderboard (ranks only, no score or formula shown) ----
+// ---- Screen 3: Pet + live rank (ranks only, no score or formula shown) ----
 
 function renderPet() {
   const pet = petFor(player.total);
   $('pet-img').src = pet.img;
   $('pet-img').alt = pet.name;
-  $('pet-name').textContent = pet.name;
+  // "Teenager Mindchi": the first word(s) pink, "Mindchi" blue, like the logo's two colours
+  const words = pet.name.split(' ');
+  $('pet-name').replaceChildren(el('span', 'a', words.slice(0, -1).join(' ')), ' ', el('span', 'b', words.at(-1)));
   $('pet-text').textContent = pet.text;
+  if (hatchNext) {
+    hatchNext = false;
+    $('hatch').classList.add('hatching');
+    setTimeout(() => $('hatch').classList.remove('hatching'), 1600);
+  }
 
   renderMiniBoard();
   renderFinal();
@@ -207,20 +286,28 @@ function renderMiniBoard() {
     rows.push(myRank);
   }
   $('mini-board').replaceChildren(...rows.map((r) => {
-    if (!r) return el('li', 'gap', '…');
+    if (!r) {
+      const gap = el('li', 'gap', '…');
+      gap.setAttribute('aria-hidden', 'true');
+      return gap;
+    }
     const me = r.id === player.id;
     const li = el('li', me ? 'me' : '');
     li.append(
-      el('span', 'rank', r.rank === 1 ? '👑' : `#${r.rank}`),
+      el('span', r.rank <= 3 ? `tok r${r.rank}` : 'tok', r.rank),
       el('span', 'name', me ? `${r.nickname} (you)` : r.nickname),
     );
     return li;
   }));
+  $('my-rank').textContent = myRank ? `#${myRank.rank}` : '…';
+  $('rank-label').textContent = state.finished ? 'Final rank' : 'Your rank';
+  $('rank-live').hidden = state.finished;
 }
 
-// After Finish every ranked player is asked to come to the booth: if someone above
-// them isn't there, the prize moves down the line and could reach them.
-let buzzed = null; // the banner kind the phone last vibrated for
+// After Finish, a card fills the first screen. The player being called gets a pulsing pink
+// card; everyone else is asked to come to the booth too (a prize can move down the line to
+// them) and sees the same 3 prize slots as the iPad.
+let buzzed = null; // the card the phone last vibrated for
 function renderFinal() {
   const prize = api.currentPrize(state);
   const isWinner = prize !== null && myRank?.rank === state.winner_rank;
@@ -230,10 +317,17 @@ function renderFinal() {
     buzzed = null;
     return;
   }
-  $('final').classList.toggle('winner', isWinner || won > 0);
-  $('final').textContent = isWinner ? COPY.winner(prize)
-    : won ? COPY.prizeReceived(won)
-    : `${COPY.finishedRank(myRank.rank)} ${prize ? COPY.comeToBooth(calling?.nickname, prize) : COPY.prizesDone}`;
+  const pink = isWinner || won > 0;
+  const msg = isWinner ? COPY.winner(prize) : won ? COPY.prizeReceived(won)
+    : { title: COPY.finishedRank(myRank.rank), text: prize ? COPY.comeToBooth : COPY.prizesDone };
+  $('final-card').className = `callout ${pink ? 'pink' : 'yellow'}${isWinner ? ' pulse' : ''}`;
+  $('final-icon').setAttribute('class', `ic ${pink ? 'f-yellow' : 'f-white'}`);
+  $('final-icon').innerHTML = `<use href="#${pink ? 'i-trophy' : 'i-pin'}"/>`;
+  $('final-title').textContent = msg.title;
+  $('final-text').textContent = msg.text;
+  $('prizes').hidden = pink;
+  if (!pink) $('prizes').replaceChildren(...prizeSlots(state, prize, calling, winnerNames));
+  $('final-next').textContent = isWinner ? 'Scroll down for your Mindchi and rank' : 'Scroll down to see your Mindchi';
 
   const kind = isWinner ? 'invited' : 'finished';
   if (buzzed !== kind) navigator.vibrate?.([200, 100, 200]); // Android only; ignored elsewhere

@@ -2,39 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex">
   <title>Mind Club — Admin</title>
   <link rel="icon" href="img/RMC_logo.jpg">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin">
-  <h1>Admin</h1>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol>
+    </defs>
+  </svg>
 
-  <section class="card">
-    <p id="stats"></p>
-    <p id="status"></p>
-    <button id="finish" hidden>Finish</button>
-    <button id="reopen" class="secondary" hidden>Reopen</button>
-  </section>
+  <main class="ad">
+    <header class="ad-head"><h1>Mind Club admin</h1><span id="pill" class="pill">Open</span></header>
+    <div class="ad-grid">
+      <!-- Left (top on a phone): Finish during the day, the prize handout after -->
+      <div class="ad-col">
+        <section id="open-card" class="ad-card">
+          <h2>At 3:45 PM</h2>
+          <p>Finish locks the ranking and starts the prize handout. Players who haven't pressed Yes can't submit after this.</p>
+          <button id="finish" class="btn coral block">Finish the game</button>
+        </section>
 
-  <section id="prize" class="card" hidden>
-    <h2>Prize handout</h2>
-    <p id="now">Handing out the <strong id="place"></strong> · Now inviting: <strong id="winner"></strong></p>
-    <p id="done" hidden>All 3 prizes have been given.</p>
-    <button id="given">Prize given</button>
-    <button id="skip" class="secondary">Skip</button>
-    <ul id="winners"></ul>
-  </section>
+        <section id="prize" class="ad-card" hidden>
+          <h2>Prize handout</h2>
+          <div id="ad-prizes" class="prizes"></div>
+          <div id="now" class="invite">
+            <small id="place"></small>
+            <div id="winner" class="big"></div>
+            <div id="winner-scores" class="scores"></div>
+          </div>
+          <p id="done" class="invite" hidden>All 3 prizes have been given.</p>
+          <div class="ad-actions">
+            <button id="given" class="btn block">Prize given</button>
+            <button id="skip" class="btn white block">Not here: skip</button>
+          </div>
+          <ol id="winners" class="sr"></ol>
+        </section>
 
-  <section class="card">
-    <h2>Full ranking</h2>
-    <table>
-      <thead><tr><th>#</th><th>Nickname</th><th>G1</th><th>G2</th><th>G3</th><th>Total</th><th></th></tr></thead>
-      <tbody id="players"></tbody>
-    </table>
-    <p id="no-players" hidden>No one has confirmed their results yet.</p>
-  </section>
+        <div id="reopen-row" class="reopen" hidden>
+          <span>Finished by mistake?</span>
+          <button id="reopen" class="btn white small">Reopen</button>
+        </div>
+      </div>
+
+      <!-- Right (below on a phone): numbers and the full ranking -->
+      <div class="ad-col">
+        <section class="ad-card stats">
+          <div><b id="n-joined">0</b><span>joined</span></div>
+          <div><b id="n-confirmed">0</b><span>confirmed</span></div>
+          <div><b id="n-playing">0</b><span id="n-playing-label">still playing</span></div>
+        </section>
+        <section class="ad-card">
+          <h2 id="table-title">Ranking</h2>
+          <table class="ad-table">
+            <thead><tr><th>#</th><th>Nickname</th><th class="n g">G1</th><th class="n g">G2</th><th class="n g">G3</th><th class="sc"></th><th class="n">Total</th><th><span class="sr">Remove</span></th></tr></thead>
+            <tbody id="players"></tbody>
+          </table>
+          <p id="no-players" hidden>No one has confirmed their results yet.</p>
+        </section>
+      </div>
+    </div>
+  </main>
 
   <script type="module" src="js/pages/admin.js"></script>
 </body>

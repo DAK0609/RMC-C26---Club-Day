@@ -2,82 +2,187 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#68D0F8">
   <title>Mind Club</title>
   <link rel="icon" href="img/RMC_logo.jpg">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="player">
-  <img class="logo" src="img/RMC_logo.jpg" alt="RMIT Mind Club">
+<body class="player sparkles">
+  <!-- Drawings: the egg, its cracks, and icons -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="egg" viewBox="0 0 120 150">
+        <path d="M60 6C90 6 112 52 112 88C112 122 89 144 60 144C31 144 8 122 8 88C8 52 30 6 60 6Z" fill="#FFF7FA" stroke="#111" stroke-width="5"/>
+        <circle cx="40" cy="50" r="7" fill="#FE9DC0"/><circle cx="86" cy="70" r="9" fill="#96E4FA"/>
+        <circle cx="44" cy="114" r="6" fill="#F8E878"/><circle cx="88" cy="118" r="5" fill="#FE9DC0"/>
+      </symbol>
+      <symbol id="crack1" viewBox="0 0 120 150"><path d="M10 84L23 73L34 86L46 73" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="crack2" viewBox="0 0 120 150"><path d="M46 73L58 88L70 74L80 86" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="crack3" viewBox="0 0 120 150"><path d="M80 86L92 73L102 85L110 79" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="sleep" viewBox="0 0 120 150">
+        <path d="M38 92q7 7 14 0M68 92q7 7 14 0" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M86 18h12l-12 14h12M104 2h8l-8 9h8" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 3h8v6a4 4 0 0 1-8 0Z"/><path d="M8 5H4v2a4 4 0 0 0 4 4M16 5h4v2a4 4 0 0 1-4 4M12 13v4M8 21h8l-1-4H9Z"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17v.5"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v13M6 12l6 6 6-6"/></symbol>
+    </defs>
+  </svg>
+
+  <main class="p">
+  <!-- After Finish: a card that fills the first screen, above the device -->
+  <div id="final" class="first-screen" data-fill hidden>
+    <div id="final-card" class="callout">
+      <svg id="final-icon" class="ic" aria-hidden="true"></svg>
+      <h2 id="final-title"></h2>
+      <p id="final-text"></p>
+      <div id="prizes" class="prizes"></div>
+    </div>
+    <button type="button" class="next" data-to="device"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg><span id="final-next"></span></button>
+  </div>
+
+  <div id="device" class="shell">
+    <img class="badge" src="img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+    <p class="brand" aria-hidden="true"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></p>
 
   <!-- Shown until the first load finishes, so returning players don't see the welcome screen flash -->
   <section id="loading" class="screen">
-    <p>Loading…</p>
+    <div class="display">
+      <svg class="egg wobble" viewBox="0 0 120 150" aria-hidden="true"><use href="#egg"/></svg>
+      <p class="say">Loading…</p>
+    </div>
   </section>
 
   <!-- Screen 1: Welcome -->
   <section id="welcome" class="screen" hidden>
-    <h1>Hello, welcome to Mind Club! 👋</h1>
-    <p>You'll take on 3 challenges. After each one, enter the number the game host tells you.
-       Finish all 3 to discover which virtual pet is waiting for you!</p>
-    <p>🏆 The top 3 players win prizes! Keep an eye on the leaderboard and come back to the Mind Club booth
-       at 3:45 PM to claim yours. If a winner isn't there, their prize goes to the next player in line.</p>
-    <p id="welcome-notice" class="notice" hidden></p>
-    <form id="welcome-form">
-      <input id="nickname" placeholder="Your nickname" maxlength="20" autocomplete="off" required>
-      <button id="start">Start</button>
-    </form>
-    <dialog id="taken">
-      <p>⚠️ This username has been taken. Please choose another one.</p>
-      <form method="dialog"><button>OK</button></form>
+    <div class="first-screen">
+      <div class="display">
+        <svg class="egg wobble" viewBox="0 0 120 150" role="img" aria-label="An egg, waiting to hatch"><use href="#egg"/></svg>
+        <h1>Hello, welcome to Mind Club!</h1>
+        <p>Play 3 challenges to hatch your Mindchi.</p>
+      </div>
+      <form id="welcome-form" class="below">
+        <p id="welcome-notice" class="notice" hidden></p>
+        <div class="field">
+          <label for="nickname">Your nickname</label>
+          <input id="nickname" placeholder="e.g. Brainy Bao" maxlength="20" autocomplete="off" required
+                 aria-describedby="nickname-help">
+          <small id="nickname-help">Shown on the leaderboard.</small>
+        </div>
+        <button id="start" class="btn block">Start</button>
+      </form>
+      <button type="button" class="next" data-to="how"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down for how to play and prizes</button>
+    </div>
+    <div id="how" class="below">
+      <ol class="steps">
+        <li>Play the 3 challenges at the Mind Club booth.</li>
+        <li>After each one, enter the number your game host tells you.</li>
+        <li>Finish all 3 to discover which Mindchi is waiting for you!</li>
+      </ol>
+      <div class="note">
+        <svg class="ic f-white" aria-hidden="true"><use href="#i-trophy"/></svg>
+        <div><b>The top 3 players win prizes!</b>Keep an eye on the leaderboard and come back to the Mind Club booth at 3:45 PM to claim yours. If a winner isn't there, their prize goes to the next player in line.</div>
+      </div>
+    </div>
+    <dialog id="taken" class="modal">
+      <svg class="ic f-yellow" aria-hidden="true"><use href="#i-alert"/></svg>
+      <p>This username has been taken. Please choose another one.</p>
+      <form method="dialog"><button class="btn block">OK</button></form>
     </dialog>
   </section>
 
-  <!-- Screen 2: Results -->
+  <!-- Screen 2: Results. The egg cracks once per game entered. When all 3 are in, the top part
+       becomes the "Ready to hatch" first screen with the check card, and the games move below. -->
   <section id="results" class="screen" hidden>
-    <h2>Your challenges</h2>
-    <p class="hint">Tap a game after you play it and enter the number your game host tells you.</p>
-    <div id="game-cards" class="game-cards"></div>
-    <div id="confirm" class="card" hidden>
-      <p id="summary"></p>
-      <button id="yes">Yes, show my pet!</button>
-      <button id="edit" class="secondary">Edit</button>
+    <div id="results-top">
+      <div id="egg-display" class="display compact">
+        <svg id="egg-svg" class="egg wobble" viewBox="0 0 120 150" role="img"></svg>
+        <h1 id="egg-title"></h1>
+        <p id="egg-count"></p>
+        <div id="egg-pips" class="pips" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+      <div id="confirm" class="sticker confirm" hidden>
+        <h2 id="summary"></h2>
+        <p class="warn">After Yes, your numbers are locked.</p>
+        <div class="actions">
+          <button id="edit" class="btn white">Edit</button>
+          <button id="yes" class="btn">Yes, show my Mindchi!</button>
+        </div>
+      </div>
+      <button type="button" class="next" data-to="games" hidden><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down to check your 3 games</button>
+    </div>
+    <div id="games" class="below">
+      <p class="hint">Tap a game after you play it and enter the number your game host tells you.</p>
+      <div id="game-cards" class="games"></div>
     </div>
 
-    <dialog id="game-dialog">
+    <!-- Slides up from the bottom on phones. Games with a maximum get tap-a-number buttons;
+         Game 2 (no maximum) keeps − / +. #gd-input holds the number either way. -->
+    <dialog id="game-dialog" class="sheet">
       <form id="game-form" novalidate>
-        <img id="gd-img" class="game-img" alt="">
+        <div class="grab" aria-hidden="true"></div>
+        <img id="gd-img" alt="">
+        <small id="gd-num"></small>
         <h3 id="gd-title"></h3>
-        <p id="gd-question"></p>
-        <div class="stepper">
-          <button type="button" id="gd-minus" class="secondary" aria-label="Decrease">−</button>
+        <p id="gd-question" class="q"></p>
+        <div id="gd-picker" class="picker" role="radiogroup" aria-labelledby="gd-question"></div>
+        <div id="gd-stepper" class="stepper">
+          <button type="button" id="gd-minus" aria-label="Decrease">−</button>
           <input id="gd-input" type="number" inputmode="numeric" min="0" step="1" aria-labelledby="gd-question">
-          <button type="button" id="gd-plus" class="secondary" aria-label="Increase">+</button>
+          <button type="button" id="gd-plus" aria-label="Increase">+</button>
         </div>
+        <p id="gd-tip" class="tiny">Tap the number to type it.</p>
         <p id="gd-error" class="error" hidden></p>
-        <button id="gd-save">Save</button>
-        <button type="button" id="gd-cancel" class="secondary">Cancel</button>
+        <div class="actions">
+          <button id="gd-save" class="btn block">Save</button>
+          <button type="button" id="gd-cancel" class="btn quiet">Cancel</button>
+        </div>
       </form>
     </dialog>
   </section>
 
-  <!-- Screen 3: Pet -->
+  <!-- Screen 3: Pet. The first screen is the pet (it hatches right after "Yes");
+       the live rank starts below the "Scroll down" label. -->
   <section id="pet" class="screen" hidden>
-    <div id="final" class="banner" hidden></div>
-    <img id="pet-img" alt="">
-    <h2 id="pet-name"></h2>
-    <p id="pet-text"></p>
-    <div class="card mini">
-      <h3>Leaderboard</h3>
-      <ol id="mini-board"></ol>
+    <div class="first-screen">
+      <div class="display">
+        <div id="hatch" class="hatch">
+          <img id="pet-img" class="pet-img" alt="">
+          <svg class="egg half top" viewBox="0 0 120 150" aria-hidden="true"><use href="#egg"/><use href="#crack1"/><use href="#crack2"/><use href="#crack3"/></svg>
+          <svg class="egg half bottom" viewBox="0 0 120 150" aria-hidden="true"><use href="#egg"/><use href="#crack1"/><use href="#crack2"/><use href="#crack3"/></svg>
+        </div>
+        <h2 id="pet-name" class="wordmark"></h2>
+        <p id="pet-text"></p>
+      </div>
+      <button type="button" class="next" data-to="rank"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down for the live leaderboard</button>
     </div>
-    <p class="reminder">🏆 Reminder: The top 3 players will receive prizes at 3:45 PM at the Mind Club booth. Don't miss it!</p>
+    <div id="rank" class="below">
+      <div class="sticker standing">
+        <header>
+          <div><span id="rank-label" class="label">Your rank</span><span id="my-rank" class="big"></span></div>
+          <span id="rank-live" class="live">Live</span>
+        </header>
+        <ol id="mini-board" class="ranks"></ol>
+      </div>
+      <div class="note">
+        <svg class="ic f-white" aria-hidden="true"><use href="#i-trophy"/></svg>
+        <div><b>Prizes at 3:45 PM</b>The top 3 players will receive prizes at the Mind Club booth. Keep this page open, it updates by itself.</div>
+      </div>
+    </div>
   </section>
 
   <!-- After Finish, for players who never confirmed (or never joined) -->
   <section id="closed" class="screen" hidden>
-    <p id="closed-text" class="card"></p>
+    <div class="display">
+      <svg class="egg" viewBox="0 0 120 150" role="img" aria-label="A sleeping egg"><use href="#egg"/><use href="#sleep"/></svg>
+      <p id="closed-text" class="say"></p>
+    </div>
   </section>
+  </div>
+  </main>
 
   <script type="module" src="js/pages/player.js"></script>
 </body>

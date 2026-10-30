@@ -45,6 +45,12 @@ export async function getLeaderboard(limit) {
   return check(await query);
 }
 
+// Nicknames for these player ids (the prize winners). Removed players are left out.
+export async function getNicknames(ids) {
+  if (!ids.length) return [];
+  return check(await db.from('leaderboard').select('id, nickname').in('id', ids));
+}
+
 export async function getRankRow(rank) {
   return check(await db.from('leaderboard').select('*').eq('rank', rank).maybeSingle());
 }

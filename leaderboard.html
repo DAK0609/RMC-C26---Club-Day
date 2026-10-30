@@ -2,17 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#68D0F8">
   <title>Mind Club — Leaderboard</title>
   <link rel="icon" href="img/RMC_logo.jpg">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="leaderboard">
-  <img class="banner-img" src="img/RMC-banner.png" alt="RMIT Mind Club">
-  <h1>Leaderboard</h1>
-  <div id="claim" class="banner" hidden></div>
-  <ol id="board"></ol>
-  <p id="empty" class="card" hidden>No players yet. Be the first!</p>
+<body class="leaderboard sparkles">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="egg" viewBox="0 0 120 150">
+        <path d="M60 6C90 6 112 52 112 88C112 122 89 144 60 144C31 144 8 122 8 88C8 52 30 6 60 6Z" fill="#FFF7FA" stroke="#111" stroke-width="5"/>
+        <circle cx="40" cy="50" r="7" fill="#FE9DC0"/><circle cx="86" cy="70" r="9" fill="#96E4FA"/>
+        <circle cx="44" cy="114" r="6" fill="#F8E878"/><circle cx="88" cy="118" r="5" fill="#FE9DC0"/>
+      </symbol>
+      <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 18 4.5 7.5l5 4.5L12 5l2.5 7 5-4.5L21 18Z"/><path d="M4 21h16"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="lb">
+    <!-- Left: banner + "Scan to play" during the day; the prize call after Finish -->
+    <aside class="lb-side">
+      <img id="lb-banner" class="lb-banner" src="img/RMC-banner.png" alt="RMIT Mind Club: Grow Pet, Grow Mind">
+      <div id="scan" class="scan">
+        <div id="qr" class="qr" role="img" aria-label="QR code to the player page"></div>
+        <h2>Scan to play</h2>
+        <p>3 challenges. Hatch your Mindchi. The top 3 win prizes at 3:45 PM.</p>
+      </div>
+      <div id="claim" class="call" hidden>
+        <small id="call-small"></small>
+        <div id="call-who" class="who"></div>
+        <p id="call-text"></p>
+      </div>
+      <div id="lb-prizes" class="prizes" hidden></div>
+    </aside>
+
+    <!-- Right: the top 10 -->
+    <main class="lb-main">
+      <div class="lb-head"><h1 id="lb-title">Leaderboard</h1><span id="lb-live" class="live">Live</span></div>
+      <ol id="board" class="lb-list"></ol>
+      <div id="empty" class="empty-board" hidden>
+        <div>
+          <svg class="egg wobble" viewBox="0 0 120 150" aria-hidden="true"><use href="#egg"/></svg>
+          <h2>No players yet. Be the first!</h2>
+          <p>Scan the code to start.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
   <script type="module" src="js/pages/leaderboard.js"></script>
 </body>
 </html>

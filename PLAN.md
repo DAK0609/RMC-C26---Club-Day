@@ -79,7 +79,7 @@ Free tier limits: 200 live connections and 500 MB storage, enough for 100+ playe
 
 ### Pet images
 The banner already shows the 3 growth stages: **egg → small brain → brain with legs**.
-- Baby Pet = egg, Teenager Pet = small brain, Adult Pet = brain with legs and antlers
+- Baby Mindchi = egg, Teenager Mindchi = small brain, Adult Mindchi = brain with legs and antlers
 - **Option A (fast):** crop them from `RMC-banner.png`
 - **Option B (best):** ask the Media team for 3 transparent PNGs of the same characters
 
@@ -110,12 +110,15 @@ Full app logic on a structure meant to be built on; UI is basic.
 5. ✅ Automated tests: `tests/api_test.py` (24 database checks) and `tests/browser_test.py` (45 checks playing a full event in a browser) — all pass (30 Oct, after the mini leaderboard)
 6. ✅ Three prizes (added 30 Oct): 1st, 2nd and 3rd are handed out in order. **Skip** passes the invited player over, so the next player in line moves up a prize (e.g. #1 absent → #2 gets 1st, #3 gets 2nd, #4 gets 3rd). Admin lists who got each prize. `supabase/migrations/003_three_prizes.sql` (✅ run in Supabase 30 Oct)
 
-### Phase 2 — Branding & UI (≈4 hours) · Fri 30 – Sat 31 Oct
-1. Palette as CSS variables, Fredoka font, sticker card/button styles
-2. Player page: Tamagotchi frame, logo on top, 3 screens styled, egg-hatch reveal
-3. Leaderboard (iPad landscape): banner header, top 10, #1 highlight, animated reorder, "claim the 1st / 2nd / 3rd prize" banner after Finish
-4. Admin page: clean and functional (no decoration), large buttons
-5. ✅ Pet images in `img/pets/`
+### Phase 2 — Branding & UI ✅ (done 30 Oct)
+Approved wireframes: `design/wireframes.html` (open the file directly). Pets are called **Mindchi** (Baby / Teenager / Adult Mindchi).
+1. ✅ Palette as CSS variables, Fredoka font, sticker card/button styles
+2. ✅ Player page: Tamagotchi shell with the club logo, egg that cracks once per game and hatches after Yes, tap-a-number pop-ups (Game 1 and 3), live rank, full-screen card after Finish with the 3 prize slots
+3. ✅ Long screens end with a "Scroll down for…" label at the bottom of the first screen instead of cutting a section in half (player pages only)
+4. ✅ Leaderboard: top 10 always fits (iPad sideways or upright, 1024×700 and up), auto QR code, rows slide on rank change, prize call after Finish
+5. ✅ Admin: plain, big buttons, prize handout card, G1/G2/G3 per player, works on phone and iPad
+6. ✅ Checked on iPhone 12–16, iPhone SE, iPad (both ways) and older iPad sizes; tests 24/24 + 49/49
+7. ✅ Pet images in `img/pets/`
 
 ### Phase 3 — Robustness & admin tools (≈3 hours) · Sun 1 Nov
 1. Admin protection (decision #2, pending team meeting)

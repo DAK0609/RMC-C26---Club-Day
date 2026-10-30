@@ -1,7 +1,7 @@
 // Admin page (admin.html, organiser): Finish, prize handout, remove fake entries.
 import * as api from '../api.js';
 import { keepFresh } from '../live.js';
-import { $, el, busy, connectionBanner } from '../ui.js';
+import { $, el, prizeSlots, busy, connectionBanner } from '../ui.js';
 import { COPY } from '../copy.js';
 
 let state = null;
@@ -17,40 +17,59 @@ async function refresh() {
 }
 
 function renderStatus(confirmed, joined) {
-  $('stats').textContent =
-    `${joined} joined · ${confirmed} confirmed · ${joined - confirmed} still playing`;
-  $('status').textContent = state.finished
-    ? 'Finished: the ranking is locked and no more results are accepted.'
-    : 'Open: accepting results.';
-  $('finish').hidden = state.finished;
-  $('reopen').hidden = !state.finished;
+  const finished = state.finished;
+  $('pill').textContent = finished ? 'Finished' : 'Open';
+  $('pill').classList.toggle('done', finished);
+  $('n-joined').textContent = joined;
+  $('n-confirmed').textContent = confirmed;
+  $('n-playing').textContent = joined - confirmed;
+  $('n-playing-label').textContent = finished ? 'never confirmed' : 'still playing';
+  $('open-card').hidden = finished;
+  $('reopen-row').hidden = !finished;
+  $('table-title').textContent = finished ? 'Final ranking' : 'Ranking';
 }
 
+// One card: the same 3 prize slots as the iPad, who is invited (with their scores, a last
+// check for fake entries), and the two buttons.
 function renderPrize(ranked) {
   const prize = api.currentPrize(state);
   $('prize').hidden = !state.finished;
   $('now').hidden = !prize;
   $('done').hidden = !!prize;
-  if (prize) $('place').textContent = `${COPY.place(prize)} prize`;
-  $('winner').textContent = winner ? `#${winner.rank} ${winner.nickname}` : 'No more players in line';
-  $('given').disabled = $('skip').disabled = !prize || !winner;
-
   const names = new Map(ranked.map((r) => [r.id, r.nickname]));
+  $('ad-prizes').replaceChildren(...prizeSlots(state, prize, winner, names));
+  if (prize) $('place').textContent = `Inviting for the ${COPY.place(prize)} prize`;
+  $('winner').textContent = winner ? `#${winner.rank} ${winner.nickname}` : 'No more players in line';
+  $('winner-scores').textContent = winner ? `${winner.total} points: ${scores(winner)}` : '';
+  $('given').disabled = $('skip').disabled = !prize || !winner;
+  document.querySelector('.ad-actions').hidden = !prize; // nothing left to hand out
   $('winners').replaceChildren(...state.winners.map((id, i) =>
     el('li', '', `${COPY.place(i + 1)} prize: ${names.get(id) ?? '(removed player)'}`)));
 }
 
+const scores = (r) => `G1 ${r.g1}, G2 ${r.g2}, G3 ${r.g3}`;
+
+// On a phone the G1/G2/G3 columns fold into one small line under the name (the .sc cell).
 function renderPlayers(ranked) {
+  const prize = api.currentPrize(state);
   $('players').replaceChildren(...ranked.map((r) => {
-    const invited = state.finished && api.currentPrize(state) && r.rank === state.winner_rank;
-    const tr = el('tr', invited ? 'current' : '');
-    for (const v of [r.rank, r.nickname, r.g1, r.g2, r.g3, r.total]) tr.append(el('td', '', v));
-    const remove = el('button', 'secondary', 'Remove');
+    const tr = el('tr', state.finished && prize && r.rank === state.winner_rank ? 'calling' : '');
+    const rank = el('td', 'rk');
+    rank.append(el('span', r.rank <= 3 ? `tok r${r.rank}` : 'tok', r.rank));
+    const name = el('td', 'nm', r.nickname);
+    const won = state.winners.indexOf(r.id);
+    if (won >= 0) name.append(' ', el('span', 'tag', `${COPY.place(won + 1)} prize`));
+    tr.append(rank, name);
+    for (const g of [r.g1, r.g2, r.g3]) tr.append(el('td', 'n g', g));
+    tr.append(el('td', 'sc', scores(r)), el('td', 'n tot', r.total));
+    const remove = el('button', 'btn icon');
+    remove.setAttribute('aria-label', `Remove ${r.nickname}`);
+    remove.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg>';
     action(remove, () => api.removePlayer(r.id),
       `Remove "${r.nickname}" (${r.total} points)? Everyone below moves up one rank. This can't be undone.`);
-    const td = el('td');
-    td.append(remove);
-    tr.append(td);
+    const cell = el('td', 'rm');
+    cell.append(remove);
+    tr.append(cell);
     return tr;
   }));
   $('no-players').hidden = ranked.length > 0;
@@ -81,7 +100,7 @@ action($('reopen'), api.reopenEvent,
 action($('given'), () => api.givePrize(state, winner.id),
   () => `Confirm the ${COPY.place(api.currentPrize(state))} prize was given to ${winner?.nickname}?`);
 action($('skip'), () => api.skipWinner(state.winner_rank),
-  () => `Skip ${winner?.nickname}? The ${COPY.place(api.currentPrize(state))} prize moves to the next player in line.`);
+  () => `${winner?.nickname} is not here? The ${COPY.place(api.currentPrize(state))} prize moves to the next player in line.`);
 
 const run = keepFresh(refresh, {
   tables: ['players', 'event_state'],

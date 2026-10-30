@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Club Day UI: wireframes v1</title>
+  <link rel="icon" href="../img/RMC_logo.jpg">
+  <link rel="stylesheet" href="wireframes.css">
+</head>
+<body class="board">
+
+<!-- Drawings used on every board: the egg, its cracks, icons, a QR placeholder -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="egg" viewBox="0 0 120 150">
+      <path d="M60 6C90 6 112 52 112 88C112 122 89 144 60 144C31 144 8 122 8 88C8 52 30 6 60 6Z" fill="#FFF7FA" stroke="#111" stroke-width="5"/>
+      <circle cx="40" cy="50" r="7" fill="#FE9DC0"/><circle cx="86" cy="70" r="9" fill="#96E4FA"/>
+      <circle cx="44" cy="114" r="6" fill="#F8E878"/><circle cx="88" cy="118" r="5" fill="#FE9DC0"/>
+    </symbol>
+    <symbol id="crack1" viewBox="0 0 120 150"><path d="M10 84L23 73L34 86L46 73" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="crack2" viewBox="0 0 120 150"><path d="M46 73L58 88L70 74L80 86" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="crack3" viewBox="0 0 120 150"><path d="M80 86L92 73L102 85L110 79" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="sleep" viewBox="0 0 120 150">
+      <path d="M38 92q7 7 14 0M68 92q7 7 14 0" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M86 18h12l-12 14h12M104 2h8l-8 9h8" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 18 4.5 7.5l5 4.5L12 5l2.5 7 5-4.5L21 18Z"/><path d="M4 21h16"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 3h8v6a4 4 0 0 1-8 0Z"/><path d="M8 5H4v2a4 4 0 0 0 4 4M16 5h4v2a4 4 0 0 1-4 4M12 13v4M8 21h8l-1-4H9Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v13M6 12l6 6 6-6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17v.5"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+    <symbol id="qr" viewBox="0 0 25 25">
+      <rect width="25" height="25" fill="#fff"/>
+      <g fill="#111" fill-rule="evenodd" shape-rendering="crispEdges">
+        <path d="M0 0h7v7H0zM1 1v5h5V1zM2 2h3v3H2z"/>
+        <path d="M18 0h7v7h-7zM19 1v5h5V1zM20 2h3v3h-3z"/>
+        <path d="M0 18h7v7H0zM1 19v5h5v-5zM2 20h3v3H2z"/>
+        <path d="M9 0h1v1H9zM11 1h2v1h-2zM9 3h1v2H9zM12 4h1v1h-1zM14 2h1v3h-1zM10 6h1v1h-1zM8 8h2v1H8zM12 8h3v1h-3zM17 8h1v1h-1zM20 8h2v1h-2zM23 9h2v1h-2zM0 9h1v2H0zM3 9h2v1H3zM6 10h1v2H6zM9 10h1v1H9zM11 11h3v1h-3zM16 10h1v2h-1zM19 11h1v1h-1zM22 11h1v2h-1zM2 12h2v1H2zM8 13h1v2H8zM13 13h1v1h-1zM15 13h2v1h-2zM18 13h3v1h-3zM24 14h1v1h-1zM10 15h2v1h-2zM14 15h1v2h-1zM20 16h1v1h-1zM9 18h1v1H9zM11 17h2v1h-2zM16 18h2v1h-2zM21 18h1v2h-1zM23 17h1v1h-1zM10 20h1v2h-1zM13 20h3v1h-3zM18 21h2v1h-2zM22 22h3v1h-3zM9 23h2v1H9zM15 23h1v2h-1zM12 24h2v1h-2zM19 24h1v1h-1z"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="board-head">
+  <h1>Club Day UI: wireframes v1</h1>
+  <p><b>v2:</b> club logo on the key ring, a smaller screen with a soft light-blue frame, and screens that end cleanly: instead of cutting a section in half, the first screen ends with some space and a "Scroll down for…" label. Player pages only; admin has none.</p>
+  <p>Mind Club booth, <i>Grow Pet – Grow Mind</i>. A proposal to check before building, 30 Oct. All names and numbers are sample data.
+     The dashed pink line on iPhone screens marks what's visible before scrolling in Safari. When a player screen has more below, the first screen ends with a little space and a black "Scroll down for…" label just above that line, and the next section starts below it. Nothing is cut in half or covered. In the app the space adjusts to each phone's height, and tapping the label jumps to the section.</p>
+  <ol>
+    <li><b>The phone is the Tamagotchi.</b> Pink shell, screen, and 3 buttons (the 3 games). The egg cracks a little with each game you enter and hatches when you press Yes.</li>
+    <li><b>The top 3 have their own colours everywhere:</b> 1st yellow, 2nd pink, 3rd blue.</li>
+    <li><b>The iPad shows the whole top 10 without scrolling,</b> plus a big QR code that pulls people in.</li>
+    <li><b>After Finish, everyone sees the same 3 prize slots</b> on their phone, the iPad and the admin page.</li>
+    <li><b>Spec wording stays word for word;</b> emoji become drawn icons so they look the same on every phone.</li>
+  </ol>
+</header>
+
+<!-- ================================================================ -->
+<section>
+  <h2>Player · iPhone</h2>
+  <p>What a visitor sees after scanning the QR code, from joining to the prize call. Drawn at 390 px wide (iPhone 12–16). Nothing is wider than the screen, so it also fits a 375 px iPhone SE; I'll test that on the real pages.</p>
+  <div class="row">
+
+    <!-- 1. Welcome -->
+    <figure class="w-phone">
+      <div class="device phone p sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="first">
+            <div class="screen">
+              <svg class="egg wobble" viewBox="0 0 120 150" role="img" aria-label="An egg, waiting to hatch"><use href="#egg"/></svg>
+              <h1>Hello, welcome to Mind Club!</h1>
+              <p>Play 3 challenges to hatch your virtual pet.</p>
+            </div>
+            <div class="below">
+              <div class="field">
+                <label for="n1">Your nickname</label>
+                <input id="n1" placeholder="e.g. Brainy Bao" maxlength="20">
+                <small>Shown on the leaderboard. Up to 20 characters.</small>
+              </div>
+              <button class="btn block">Start</button>
+            </div>
+            <a class="next" href="#how-1"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down for how to play and prizes</a>
+          </div>
+          <div class="below" id="how-1">
+            <ol class="steps">
+              <li>Play the 3 challenges at the Mind Club booth.</li>
+              <li>After each one, enter the number your game host tells you.</li>
+              <li>Finish all 3 to discover which virtual pet is waiting for you!</li>
+            </ol>
+            <div class="note">
+              <svg class="ic f-white" aria-hidden="true"><use href="#i-trophy"/></svg>
+              <div><b>The top 3 players win prizes!</b>Keep an eye on the leaderboard and come back to the Mind Club booth at 3:45 PM to claim yours. If a winner isn't there, their prize goes to the next player in line.</div>
+            </div>
+          </div>
+        </div>
+        <div class="fold"><span>first screen</span></div>
+      </div>
+      <figcaption><b>1. Welcome</b>A wobbling egg says "something's inside". Nickname and Start are on the first screen, which ends with "Scroll down for how to play and prizes". The steps and prize rule start below, in the current wording.</figcaption>
+    </figure>
+
+    <!-- 1b. Nickname taken -->
+    <figure class="w-phone">
+      <div class="device phone fixed p sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen">
+            <svg class="egg" viewBox="0 0 120 150" aria-hidden="true"><use href="#egg"/></svg>
+            <h1>Hello, welcome to Mind Club!</h1>
+            <p>Play 3 challenges to hatch your virtual pet.</p>
+          </div>
+          <div class="below">
+            <div class="field">
+              <label for="n2">Your nickname</label>
+              <input id="n2" class="bad" value="Bao" maxlength="20">
+              <small>Shown on the leaderboard. Up to 20 characters.</small>
+            </div>
+            <button class="btn block">Start</button>
+          </div>
+        </div>
+        <div class="backdrop"></div>
+        <div class="modal" role="dialog" aria-label="Nickname taken">
+          <svg class="ic f-yellow" aria-hidden="true"><use href="#i-alert"/></svg>
+          <p>This username has been taken. Please choose another one.</p>
+          <button class="btn block">OK</button>
+        </div>
+      </div>
+      <figcaption><b>1b. Nickname taken</b>Same pop-up text as now (spec). After OK the box stays red, so it's clear what to change.</figcaption>
+    </figure>
+
+    <!-- 2. Games, 1 of 3 -->
+    <figure class="w-phone">
+      <div class="device phone p sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen compact">
+            <svg class="egg wobble" viewBox="0 0 120 150" role="img" aria-label="Your egg has 1 crack"><use href="#egg"/><use href="#crack1"/></svg>
+            <h1>dak's egg</h1>
+            <p>1 of 3 games entered</p>
+            <div class="pips" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+          </div>
+          <div class="below">
+            <p class="hint">Tap a game after you play it and enter the number your game host tells you.</p>
+            <div class="games">
+              <button class="game"><img src="../img/games/game1.svg" alt=""><span><small>Game 1</small><strong>A Little In Common</strong></span><span class="lcd" aria-label="Saved: 2">2</span></button>
+              <button class="game"><img src="../img/games/game2.svg" alt=""><span><small>Game 2</small><strong>The Skillful Hand</strong><em>Tap after you play</em></span><span class="lcd empty"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></span></button>
+              <button class="game"><img src="../img/games/game3.svg" alt=""><span><small>Game 3</small><strong>Ring The Right Thing</strong><em>Tap after you play</em></span><span class="lcd empty"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></span></button>
+            </div>
+          </div>
+        </div>
+        <div class="fold"><span>first screen</span></div>
+      </div>
+      <figcaption><b>2. The 3 games</b>The egg screen is shorter here, so all 3 games fit on the first screen. Each game entered adds a crack to the egg. The 3 game buttons work like the Tamagotchi's buttons: a dashed + means not entered yet, a yellow number means saved.</figcaption>
+    </figure>
+
+    <!-- 2b. Game 1 pop-up -->
+    <figure class="w-phone">
+      <div class="device phone fixed p sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen compact">
+            <svg class="egg" viewBox="0 0 120 150" aria-hidden="true"><use href="#egg"/></svg>
+            <h1>dak's egg</h1>
+            <p>0 of 3 games entered</p>
+            <div class="pips" aria-hidden="true"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="backdrop"></div>
+        <div class="sheet" role="dialog" aria-label="Game 1">
+          <div class="grab"></div>
+          <img src="../img/games/game1.svg" alt="">
+          <small>Game 1</small>
+          <h3>A Little In Common</h3>
+          <p class="q">How many answers did you have in common?</p>
+          <div class="picker" role="radiogroup" aria-label="Answers in common">
+            <button role="radio" aria-checked="false">0</button>
+            <button role="radio" aria-checked="false">1</button>
+            <button role="radio" aria-checked="true" class="on">2</button>
+            <button role="radio" aria-checked="false">3</button>
+          </div>
+          <div class="actions">
+            <button class="btn block">Save</button>
+            <button class="btn quiet">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>2b. Entering Game 1</b>The pop-up slides up from the bottom, within thumb reach. Games 1 (0–3) and 3 (0–9) become tap-a-number buttons: no typing, and no number outside the range. Game 3 shows 0–9 in two rows of 5.</figcaption>
+    </figure>
+
+    <!-- 2c. Game 2 pop-up -->
+    <figure class="w-phone">
+      <div class="device phone fixed p sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen compact">
+            <svg class="egg" viewBox="0 0 120 150" aria-hidden="true"><use href="#egg"/><use href="#crack1"/></svg>
+            <h1>dak's egg</h1>
+            <p>1 of 3 games entered</p>
+            <div class="pips" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="backdrop"></div>
+        <div class="sheet" role="dialog" aria-label="Game 2">
+          <div class="grab"></div>
+          <img src="../img/games/game2.svg" alt="">
+          <small>Game 2</small>
+          <h3>The Skillful Hand</h3>
+          <p class="q">How many marbles did you move?</p>
+          <div class="stepper">
+            <button aria-label="Decrease">−</button>
+            <output aria-label="Marbles moved">8</output>
+            <button aria-label="Increase">+</button>
+          </div>
+          <p class="tiny">Tap the number to type it.</p>
+          <div class="actions">
+            <button class="btn block">Save</button>
+            <button class="btn quiet">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>2c. Entering Game 2</b>No maximum, so it keeps − and +. The keyboard doesn't open by itself; tapping the number opens the number keypad.</figcaption>
+    </figure>
+
+    <!-- 2d. Ready to hatch -->
+    <figure class="w-phone">
+      <div class="device phone p sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="first">
+            <div class="screen">
+              <svg class="egg wobble fast" viewBox="0 0 120 150" role="img" aria-label="Your egg is about to hatch"><use href="#egg"/><use href="#crack1"/><use href="#crack2"/><use href="#crack3"/></svg>
+              <h1>Ready to hatch!</h1>
+              <p>3 of 3 games entered</p>
+              <div class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+            </div>
+            <div class="sticker confirm">
+              <h2>Game 1: 2 · Game 2: 8 · Game 3: 4 — Is this correct?</h2>
+              <p class="warn">After Yes, your numbers are locked.</p>
+              <div class="actions">
+                <button class="btn white">Edit</button>
+                <button class="btn">Yes, show my pet!</button>
+              </div>
+            </div>
+            <a class="next" href="#games-2d"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down to check your 3 games</a>
+          </div>
+          <div class="below" id="games-2d">
+            <div class="games">
+              <button class="game"><img src="../img/games/game1.svg" alt=""><span><small>Game 1</small><strong>A Little In Common</strong></span><span class="lcd">2</span></button>
+              <button class="game"><img src="../img/games/game2.svg" alt=""><span><small>Game 2</small><strong>The Skillful Hand</strong></span><span class="lcd">8</span></button>
+              <button class="game"><img src="../img/games/game3.svg" alt=""><span><small>Game 3</small><strong>Ring The Right Thing</strong></span><span class="lcd">4</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="fold"><span>first screen</span></div>
+      </div>
+      <figcaption><b>2d. Ready to hatch</b>With all 3 entered, the egg is big again and shakes faster: it's the moment before hatching. The check card is on the first screen; your 3 games start below the "Scroll down" label. The question is the spec text, unchanged. New line under it: "After Yes, your numbers are locked."</figcaption>
+    </figure>
+
+    <!-- 3. Pet + live rank -->
+    <figure class="w-phone">
+      <div class="device phone p sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="first">
+            <div class="screen">
+              <img class="pet-img" src="../img/pets/teen.png" alt="Teenager Pet">
+              <div class="wordmark"><span class="a">Teenager</span> <span class="b">Pet</span></div>
+              <p>You're a Teenager Pet! Growing fast and full of energy — you're on your way up!</p>
+            </div>
+            <a class="next" href="#rank-3"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down for the live leaderboard</a>
+          </div>
+          <div class="below" id="rank-3">
+            <div class="sticker standing">
+              <header>
+                <div><span class="label">Your rank</span><span class="big">#11</span></div>
+                <span class="live">Live</span>
+              </header>
+              <ol class="ranks">
+                <li><span class="tok r1">1</span>Fiona</li>
+                <li><span class="tok r2">2</span>Minh Anh</li>
+                <li><span class="tok r3">3</span>Alice</li>
+                <li><span class="tok">4</span>Giang</li>
+                <li><span class="tok">5</span>Bao</li>
+                <li class="gap" aria-hidden="true">…</li>
+                <li class="me"><span class="tok">11</span>dak (you)</li>
+              </ol>
+            </div>
+            <div class="note">
+              <svg class="ic f-white" aria-hidden="true"><use href="#i-trophy"/></svg>
+              <div><b>Prizes at 3:45 PM</b>The top 3 players will receive prizes at the Mind Club booth. Keep this page open, it updates by itself.</div>
+            </div>
+          </div>
+        </div>
+        <div class="fold"><span>first screen</span></div>
+      </div>
+      <figcaption><b>3. Your pet + live rank</b>Hatching takes about 1.5 s: the egg shakes, splits, and the pet pops up. The pet's name is lettered like the RMIT MIND CLUB logo. The first screen is just your pet. Below the label: your rank, updated live (top 5 + you, ranks only).</figcaption>
+    </figure>
+
+    <!-- 4a. Finished: you're called -->
+    <figure class="w-phone">
+      <div class="device phone p sparkles">
+        <div class="first">
+        <div class="callout pink pulse">
+          <svg class="ic f-yellow" aria-hidden="true"><use href="#i-trophy"/></svg>
+          <h2>Congratulations! You won the 2nd prize!</h2>
+          <p>Come back to the Mind Club booth to claim it.</p>
+        </div>
+        <a class="next" href="#pet-4a"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down for your pet and the final ranking</a>
+        </div>
+        <div class="shell" id="pet-4a">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen">
+            <img class="pet-img" src="../img/pets/adult.png" alt="Adult Pet">
+            <div class="wordmark"><span class="a">Adult</span> <span class="b">Pet</span></div>
+          </div>
+          <div class="below">
+            <div class="sticker standing">
+              <header><div><span class="label">Final rank</span><span class="big">#3</span></div></header>
+              <ol class="ranks">
+                <li><span class="tok r1">1</span>Fiona</li>
+                <li><span class="tok r2">2</span>Minh Anh</li>
+                <li class="me"><span class="tok r3">3</span>Alice (you)</li>
+                <li><span class="tok">4</span>Giang</li>
+                <li><span class="tok">5</span>Bao</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="fold"><span>first screen</span></div>
+      </div>
+      <figcaption><b>4a. After Finish: you're called</b>The pink card fills the first screen and pulses until the prize is given. For the 1st prize it shows the spec's "Congratulations! You're #1!" text.</figcaption>
+    </figure>
+
+    <!-- 4b. Finished: everyone else -->
+    <figure class="w-phone">
+      <div class="device phone p sparkles">
+        <div class="first">
+        <div class="callout yellow">
+          <svg class="ic f-white" aria-hidden="true"><use href="#i-pin"/></svg>
+          <h2>Thanks for playing! You finished #11.</h2>
+          <p>Come to the Mind Club booth now! If a winner isn't there, their prize goes to the next player in line.</p>
+          <div class="prizes">
+            <div class="prize p1"><div class="medal">1st</div><b>Minh Anh</b><span>Given</span></div>
+            <div class="prize p2 now"><div class="medal">2nd</div><b>Alice</b><span>Calling now</span></div>
+            <div class="prize p3"><div class="medal">3rd</div><b>Next</b><span>Waiting</span></div>
+          </div>
+        </div>
+        <a class="next" href="#pet-4b"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down to see your pet</a>
+        </div>
+        <div class="shell" id="pet-4b">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen">
+            <img class="pet-img" src="../img/pets/teen.png" alt="Teenager Pet">
+            <div class="wordmark"><span class="a">Teenager</span> <span class="b">Pet</span></div>
+          </div>
+        </div>
+        <div class="fold"><span>first screen</span></div>
+      </div>
+      <figcaption><b>4b. After Finish: everyone else</b>The yellow card fills the first screen: every ranked player is asked to come over. They see the same 3 prize slots as the iPad, so they can tell whether a prize could still reach them.</figcaption>
+    </figure>
+
+    <!-- 4c. Prize received -->
+    <figure class="w-phone">
+      <div class="device phone p sparkles">
+        <div class="first">
+        <div class="callout pink">
+          <svg class="ic f-yellow" aria-hidden="true"><use href="#i-trophy"/></svg>
+          <h2>You received the 1st prize.</h2>
+          <p>Congratulations and thanks for playing!</p>
+        </div>
+        <a class="next" href="#pet-4c"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scroll down to see your pet</a>
+        </div>
+        <div class="shell" id="pet-4c">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen">
+            <img class="pet-img" src="../img/pets/adult.png" alt="Adult Pet">
+            <div class="wordmark"><span class="a">Adult</span> <span class="b">Pet</span></div>
+            <p>You're an Adult Pet! Fully grown and ready for anything — you crushed it!</p>
+          </div>
+        </div>
+        <div class="fold"><span>first screen</span></div>
+      </div>
+      <figcaption><b>4c. Prize received</b>After the organiser taps "Prize given", the winner's card stops pulsing and says thanks.</figcaption>
+    </figure>
+
+    <!-- 5. Ended -->
+    <figure class="w-phone">
+      <div class="device phone p sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen">
+            <svg class="egg" viewBox="0 0 120 150" role="img" aria-label="A sleeping egg"><use href="#egg"/><use href="#sleep"/></svg>
+            <h1>The game has ended.</h1>
+            <p>Thanks for visiting Mind Club!</p>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>5. Game ended</b>For people who open the link after Finish: a sleeping egg. The same layout shows "Results are closed" for players who started but never pressed Yes.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section>
+  <h2>Player · iPad</h2>
+  <p>If someone plays on an iPad or laptop, the device stays phone-sized in the middle. Pop-ups appear in the centre instead of sliding up.</p>
+  <div class="row">
+    <figure class="w-ipad-p">
+      <div class="device ipad-p p center sparkles">
+        <div class="shell">
+          <img class="badge" src="../img/RMC_logo.jpg" alt="RMIT Mind Club logo">
+          <span class="brand"><span class="a">RMIT</span> <span class="b">MIND</span> <span class="a">CLUB</span></span>
+          <div class="screen">
+            <img class="pet-img" src="../img/pets/baby.png" alt="Baby Pet">
+            <div class="wordmark"><span class="a">Baby</span> <span class="b">Pet</span></div>
+            <p>You're a Baby Pet! Small but full of potential — every great journey starts somewhere.</p>
+          </div>
+          <div class="below">
+            <div class="sticker standing">
+              <header>
+                <div><span class="label">Your rank</span><span class="big">#6</span></div>
+                <span class="live">Live</span>
+              </header>
+              <ol class="ranks">
+                <li><span class="tok r1">1</span>Fiona</li>
+                <li><span class="tok r2">2</span>Minh Anh</li>
+                <li><span class="tok r3">3</span>Alice</li>
+                <li><span class="tok">4</span>Giang</li>
+                <li><span class="tok">5</span>Bao</li>
+                <li class="me"><span class="tok">6</span>Chi (you)</li>
+              </ol>
+            </div>
+            <div class="note">
+              <svg class="ic f-white" aria-hidden="true"><use href="#i-trophy"/></svg>
+              <div><b>Prizes at 3:45 PM</b>The top 3 players will receive prizes at the Mind Club booth. Keep this page open, it updates by itself.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>Pet screen on iPad (portrait)</b>Ranked #6, right under the top 5, so no "…" gap is shown.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section>
+  <h2>Leaderboard · iPad at the booth</h2>
+  <p>Landscape, 1180 × 760 (iPad Air / 10th gen with Safari's bar). Read from 1–2 metres away, so nothing important is smaller than 24 px. Also needs to fit a 1024 × 700 iPad, which I'll check when building.</p>
+  <div class="row">
+
+    <!-- L0 empty -->
+    <figure class="w-ipad-l">
+      <div class="device ipad-l lb sparkles">
+        <div class="lb-side">
+          <img class="lb-banner" src="../img/RMC-banner.png" alt="RMIT Mind Club: Grow Pet, Grow Mind">
+          <div class="scan">
+            <svg viewBox="0 0 25 25" role="img" aria-label="QR code to the player page (placeholder)"><use href="#qr"/></svg>
+            <h2>Scan to play</h2>
+            <p>3 challenges. Hatch your pet. The top 3 win prizes at 3:45 PM.</p>
+          </div>
+        </div>
+        <div class="lb-main">
+          <div class="lb-head"><h1>Leaderboard</h1><span class="live">Live</span></div>
+          <div class="empty-board">
+            <div>
+              <svg class="egg wobble" viewBox="0 0 120 150" style="width:150px;height:188px" aria-hidden="true"><use href="#egg"/></svg>
+              <h2>No players yet. Be the first!</h2>
+              <p>Scan the code on the left to start.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>L0. 9:00, nobody has played yet</b>The QR code is the biggest thing on screen. The QR is a placeholder; the real one is made once the site has its final link.</figcaption>
+    </figure>
+
+    <!-- L1 live -->
+    <figure class="w-ipad-l">
+      <div class="device ipad-l lb sparkles">
+        <div class="lb-side">
+          <img class="lb-banner" src="../img/RMC-banner.png" alt="RMIT Mind Club: Grow Pet, Grow Mind">
+          <div class="scan">
+            <svg viewBox="0 0 25 25" role="img" aria-label="QR code to the player page (placeholder)"><use href="#qr"/></svg>
+            <h2>Scan to play</h2>
+            <p>3 challenges. Hatch your pet. The top 3 win prizes at 3:45 PM.</p>
+          </div>
+        </div>
+        <div class="lb-main">
+          <div class="lb-head"><h1>Leaderboard</h1><span class="live">Live</span></div>
+          <ol class="lb-list">
+            <li class="t1"><span class="rk"><svg class="ic f-white" role="img" aria-label="1st"><use href="#i-crown"/></svg></span><span class="name"><span>Fiona</span></span><span class="pts">170</span></li>
+            <li class="t2"><span class="rk">#2</span><span class="name"><span>Minh Anh</span></span><span class="pts">150</span></li>
+            <li class="t3"><span class="rk">#3</span><span class="name"><span>Alice</span></span><span class="pts">130</span></li>
+            <li><span class="rk">#4</span><span class="name"><span>Giang</span></span><span class="pts">110</span></li>
+            <li><span class="rk">#5</span><span class="name"><span>Bao</span></span><span class="pts">100</span></li>
+            <li><span class="rk">#6</span><span class="name"><span>Chi</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#7</span><span class="name"><span>Hana</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#8</span><span class="name"><span>Ivan</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#9</span><span class="name"><span>Lily</span></span><span class="pts">55</span></li>
+            <li><span class="rk">#10</span><span class="name"><span>Jun</span></span><span class="pts">45</span></li>
+          </ol>
+        </div>
+      </div>
+      <figcaption><b>L1. During the day</b>The whole top 10 fits without scrolling (today only 3 rows do). The top 3 rows use the prize colours. Rows slide into place when ranks change; that's the one animation on this screen.</figcaption>
+    </figure>
+
+    <!-- L2 prize time -->
+    <figure class="w-ipad-l">
+      <div class="device ipad-l lb sparkles">
+        <div class="lb-side">
+          <img class="lb-banner short" src="../img/RMC-banner.png" alt="RMIT Mind Club">
+          <div class="call pulse">
+            <small>Now calling for the 2nd prize</small>
+            <div class="who">Alice</div>
+            <p>Please come to the Mind Club booth to claim the 2nd prize!</p>
+          </div>
+          <div class="prizes">
+            <div class="prize p1"><div class="medal">1st</div><b>Minh Anh</b><span>Given</span></div>
+            <div class="prize p2 now"><div class="medal">2nd</div><b>Alice</b><span>Calling now</span></div>
+            <div class="prize p3"><div class="medal">3rd</div><b>Next</b><span>Waiting</span></div>
+          </div>
+        </div>
+        <div class="lb-main">
+          <div class="lb-head"><h1>Final ranking</h1></div>
+          <ol class="lb-list">
+            <li class="t1"><span class="rk"><svg class="ic f-white" role="img" aria-label="1st"><use href="#i-crown"/></svg></span><span class="name"><span>Fiona</span></span><span class="pts">170</span></li>
+            <li class="t2"><span class="rk">#2</span><span class="name"><span>Minh Anh</span><span class="tag">1st prize</span></span><span class="pts">150</span></li>
+            <li class="t3 calling"><span class="rk">#3</span><span class="name"><span>Alice</span><span class="tag dark">Calling</span></span><span class="pts">130</span></li>
+            <li><span class="rk">#4</span><span class="name"><span>Giang</span></span><span class="pts">110</span></li>
+            <li><span class="rk">#5</span><span class="name"><span>Bao</span></span><span class="pts">100</span></li>
+            <li><span class="rk">#6</span><span class="name"><span>Chi</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#7</span><span class="name"><span>Hana</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#8</span><span class="name"><span>Ivan</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#9</span><span class="name"><span>Lily</span></span><span class="pts">55</span></li>
+            <li><span class="rk">#10</span><span class="name"><span>Jun</span></span><span class="pts">45</span></li>
+          </ol>
+        </div>
+      </div>
+      <figcaption><b>L2. 3:45 PM, prize time</b>After Finish, the left side becomes the prize call, big enough to read across the booth. In this example Fiona (#1) wasn't there and was skipped, so Minh Anh got the 1st prize and Alice is now called for the 2nd. Skipped players get no label.</figcaption>
+    </figure>
+
+    <!-- L3 done -->
+    <figure class="w-ipad-l">
+      <div class="device ipad-l lb sparkles">
+        <div class="lb-side">
+          <img class="lb-banner short" src="../img/RMC-banner.png" alt="RMIT Mind Club">
+          <div class="call done">
+            <small>That's a wrap!</small>
+            <div class="who">All 3 prizes have been awarded.</div>
+            <p>Thanks for playing!</p>
+          </div>
+          <div class="prizes">
+            <div class="prize p1"><div class="medal">1st</div><b>Minh Anh</b><span>Given</span></div>
+            <div class="prize p2"><div class="medal">2nd</div><b>Alice</b><span>Given</span></div>
+            <div class="prize p3"><div class="medal">3rd</div><b>Bao</b><span>Given</span></div>
+          </div>
+        </div>
+        <div class="lb-main">
+          <div class="lb-head"><h1>Final ranking</h1></div>
+          <ol class="lb-list">
+            <li class="t1"><span class="rk"><svg class="ic f-white" role="img" aria-label="1st"><use href="#i-crown"/></svg></span><span class="name"><span>Fiona</span></span><span class="pts">170</span></li>
+            <li class="t2"><span class="rk">#2</span><span class="name"><span>Minh Anh</span><span class="tag">1st prize</span></span><span class="pts">150</span></li>
+            <li class="t3"><span class="rk">#3</span><span class="name"><span>Alice</span><span class="tag">2nd prize</span></span><span class="pts">130</span></li>
+            <li><span class="rk">#4</span><span class="name"><span>Giang</span></span><span class="pts">110</span></li>
+            <li><span class="rk">#5</span><span class="name"><span>Bao</span><span class="tag">3rd prize</span></span><span class="pts">100</span></li>
+            <li><span class="rk">#6</span><span class="name"><span>Chi</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#7</span><span class="name"><span>Hana</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#8</span><span class="name"><span>Ivan</span></span><span class="pts">70</span></li>
+            <li><span class="rk">#9</span><span class="name"><span>Lily</span></span><span class="pts">55</span></li>
+            <li><span class="rk">#10</span><span class="name"><span>Jun</span></span><span class="pts">45</span></li>
+          </ol>
+        </div>
+      </div>
+      <figcaption><b>L3. All prizes given</b>The call card turns yellow and stops pulsing. Prize labels stay on the winners' rows.</figcaption>
+    </figure>
+
+    <!-- L-phone -->
+    <figure class="w-phone">
+      <div class="device phone lbp sparkles">
+        <img class="lb-banner" src="../img/RMC-banner.png" alt="RMIT Mind Club: Grow Pet, Grow Mind">
+        <div class="lb-head"><h1>Leaderboard</h1><span class="live">Live</span></div>
+        <ol class="lb-list">
+          <li class="t1"><span class="rk"><svg class="ic f-white" role="img" aria-label="1st"><use href="#i-crown"/></svg></span><span class="name"><span>Fiona</span></span><span class="pts">170</span></li>
+          <li class="t2"><span class="rk">#2</span><span class="name"><span>Minh Anh</span></span><span class="pts">150</span></li>
+          <li class="t3"><span class="rk">#3</span><span class="name"><span>Alice</span></span><span class="pts">130</span></li>
+          <li><span class="rk">#4</span><span class="name"><span>Giang</span></span><span class="pts">110</span></li>
+          <li><span class="rk">#5</span><span class="name"><span>Bao</span></span><span class="pts">100</span></li>
+          <li><span class="rk">#6</span><span class="name"><span>Chi</span></span><span class="pts">70</span></li>
+          <li><span class="rk">#7</span><span class="name"><span>Hana</span></span><span class="pts">70</span></li>
+          <li><span class="rk">#8</span><span class="name"><span>Ivan</span></span><span class="pts">70</span></li>
+          <li><span class="rk">#9</span><span class="name"><span>Lily</span></span><span class="pts">55</span></li>
+          <li><span class="rk">#10</span><span class="name"><span>Jun</span></span><span class="pts">45</span></li>
+        </ol>
+        <div class="fold"><span>first screen</span></div>
+      </div>
+      <figcaption><b>L4. Leaderboard link on a phone</b>One column, same colours. After Finish the prize call and the 3 slots sit above the list.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section>
+  <h2>Admin · organiser</h2>
+  <p>Plain on purpose: fast to read under pressure, big buttons, no decoration. Same fonts and prize colours as the rest.</p>
+  <div class="row">
+
+    <!-- A1 open -->
+    <figure class="w-phone">
+      <div class="device phone ad">
+        <div class="ad-head"><h1>Mind Club admin</h1><span class="pill">Open</span></div>
+        <div class="ad-card stats">
+          <div><b>52</b><span>joined</span></div>
+          <div><b>47</b><span>confirmed</span></div>
+          <div><b>5</b><span>still playing</span></div>
+        </div>
+        <div class="ad-card">
+          <h2>At 3:45 PM</h2>
+          <p>Finish locks the ranking and starts the prize handout. Players who haven't pressed Yes can't submit after this.</p>
+          <button class="btn coral block">Finish the game</button>
+        </div>
+        <div class="ad-card">
+          <h2>Ranking</h2>
+          <ul class="ad-list">
+            <li><span class="tok r1">1</span><span class="who"><b>Fiona</b><small>G1 3, G2 12, G3 8</small></span><span class="tot">170</span><button class="btn icon" aria-label="Remove Fiona"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+            <li><span class="tok r2">2</span><span class="who"><b>Minh Anh</b><small>G1 2, G2 10, G3 9</small></span><span class="tot">150</span><button class="btn icon" aria-label="Remove Minh Anh"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+            <li><span class="tok r3">3</span><span class="who"><b>Alice</b><small>G1 3, G2 10, G3 6</small></span><span class="tot">130</span><button class="btn icon" aria-label="Remove Alice"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+            <li><span class="tok">4</span><span class="who"><b>Giang</b><small>G1 2, G2 9, G3 6</small></span><span class="tot">110</span><button class="btn icon" aria-label="Remove Giang"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+            <li><span class="tok">5</span><span class="who"><b>Bao</b><small>G1 3, G2 8, G3 5</small></span><span class="tot">100</span><button class="btn icon" aria-label="Remove Bao"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+            <li><span class="tok">6</span><span class="who"><b>Chi</b><small>G1 2, G2 7, G3 4</small></span><span class="tot">70</span><button class="btn icon" aria-label="Remove Chi"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+          </ul>
+        </div>
+      </div>
+      <figcaption><b>A1. During the day</b>Finish is coral because it locks the game, and it still asks "Finish now?". Each G1/G2/G3 is visible, so fake scores stand out. The bin removes a player (with a confirm).</figcaption>
+    </figure>
+
+    <!-- A2 handout -->
+    <figure class="w-phone">
+      <div class="device phone ad">
+        <div class="ad-head"><h1>Mind Club admin</h1><span class="pill done">Finished</span></div>
+        <div class="ad-card">
+          <h2>Prize handout</h2>
+          <div class="prizes">
+            <div class="prize p1"><div class="medal">1st</div><b>Minh Anh</b><span>Given</span></div>
+            <div class="prize p2 now"><div class="medal">2nd</div><b>Alice</b><span>Now</span></div>
+            <div class="prize p3"><div class="medal">3rd</div><b>Next</b><span>Waiting</span></div>
+          </div>
+          <div class="invite">
+            <small>Inviting for the 2nd prize</small>
+            <div class="big">#3 Alice</div>
+            <div class="scores">130 points: G1 3, G2 10, G3 6</div>
+          </div>
+          <button class="btn block">Prize given</button>
+          <button class="btn white block">Not here: skip</button>
+        </div>
+        <div class="ad-card">
+          <h2>Final ranking</h2>
+          <ul class="ad-list">
+            <li><span class="tok r1">1</span><span class="who"><b>Fiona</b><small>G1 3, G2 12, G3 8</small></span><span class="tot">170</span><button class="btn icon" aria-label="Remove Fiona"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+            <li><span class="tok r2">2</span><span class="who"><b>Minh Anh <span class="tag">1st prize</span></b><small>G1 2, G2 10, G3 9</small></span><span class="tot">150</span><button class="btn icon" aria-label="Remove Minh Anh"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+            <li class="calling"><span class="tok r3">3</span><span class="who"><b>Alice</b><small>G1 3, G2 10, G3 6</small></span><span class="tot">130</span><button class="btn icon" aria-label="Remove Alice"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+            <li><span class="tok">4</span><span class="who"><b>Giang</b><small>G1 2, G2 9, G3 6</small></span><span class="tot">110</span><button class="btn icon" aria-label="Remove Giang"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></li>
+          </ul>
+        </div>
+        <div class="reopen"><span>Finished by mistake?</span><button class="btn white small">Reopen</button></div>
+      </div>
+      <figcaption><b>A2. Prize handout</b>One card holds the prize, the person, their scores (a last check for fakes) and 2 big buttons. "Skip" becomes "Not here: skip", so its meaning is clear. Reopen moves to the bottom, away from the busy buttons.</figcaption>
+    </figure>
+
+    <!-- A3 iPad -->
+    <figure class="w-ipad-l">
+      <div class="device ipad-l ad wide">
+        <div class="col">
+          <div class="ad-head"><h1>Mind Club admin</h1><span class="pill done">Finished</span></div>
+          <div class="ad-card">
+            <h2>Prize handout</h2>
+            <div class="prizes">
+              <div class="prize p1"><div class="medal">1st</div><b>Minh Anh</b><span>Given</span></div>
+              <div class="prize p2 now"><div class="medal">2nd</div><b>Alice</b><span>Now</span></div>
+              <div class="prize p3"><div class="medal">3rd</div><b>Next</b><span>Waiting</span></div>
+            </div>
+            <div class="invite">
+              <small>Inviting for the 2nd prize</small>
+              <div class="big">#3 Alice</div>
+              <div class="scores">130 points: G1 3, G2 10, G3 6</div>
+            </div>
+            <button class="btn block">Prize given</button>
+            <button class="btn white block">Not here: skip</button>
+          </div>
+          <div class="reopen"><span>Finished by mistake?</span><button class="btn white small">Reopen</button></div>
+        </div>
+        <div class="col">
+          <div class="ad-card stats">
+            <div><b>52</b><span>joined</span></div>
+            <div><b>47</b><span>confirmed</span></div>
+            <div><b>5</b><span>never confirmed</span></div>
+          </div>
+          <div class="ad-card">
+            <h2>Final ranking</h2>
+            <table class="ad-table">
+              <thead><tr><th>#</th><th>Nickname</th><th class="n">G1</th><th class="n">G2</th><th class="n">G3</th><th class="n">Total</th><th><span class="sr">Remove</span></th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Fiona</td><td class="n">3</td><td class="n">12</td><td class="n">8</td><td class="n"><b>170</b></td><td><button class="btn icon" aria-label="Remove Fiona"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></td></tr>
+                <tr><td>2</td><td>Minh Anh <span class="tag">1st prize</span></td><td class="n">2</td><td class="n">10</td><td class="n">9</td><td class="n"><b>150</b></td><td><button class="btn icon" aria-label="Remove Minh Anh"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></td></tr>
+                <tr class="calling"><td>3</td><td>Alice</td><td class="n">3</td><td class="n">10</td><td class="n">6</td><td class="n"><b>130</b></td><td><button class="btn icon" aria-label="Remove Alice"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></td></tr>
+                <tr><td>4</td><td>Giang</td><td class="n">2</td><td class="n">9</td><td class="n">6</td><td class="n"><b>110</b></td><td><button class="btn icon" aria-label="Remove Giang"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></td></tr>
+                <tr><td>5</td><td>Bao</td><td class="n">3</td><td class="n">8</td><td class="n">5</td><td class="n"><b>100</b></td><td><button class="btn icon" aria-label="Remove Bao"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></td></tr>
+                <tr><td>6</td><td>Chi</td><td class="n">2</td><td class="n">7</td><td class="n">4</td><td class="n"><b>70</b></td><td><button class="btn icon" aria-label="Remove Chi"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></td></tr>
+                <tr><td>7</td><td>Hana</td><td class="n">3</td><td class="n">7</td><td class="n">3</td><td class="n"><b>70</b></td><td><button class="btn icon" aria-label="Remove Hana"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>A3. Admin on iPad or laptop</b>Handout on the left, the full table with G1/G2/G3 on the right. The table scrolls on its own; the handout buttons never move.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<script>
+  // Mockup only: stretch each first screen so its "Scroll down" label lands just above the dashed
+  // line. The app does the same with the phone's real screen height.
+  const FOLD = 664, GAP = 12;
+  document.fonts.ready.then(() => {
+    for (const first of document.querySelectorAll('.phone .first')) {
+      const top = first.getBoundingClientRect().top - first.closest('.device').getBoundingClientRect().top;
+      first.style.minHeight = (FOLD - GAP - top) + 'px';
+    }
+  });
+</script>
+</body>
+</html>

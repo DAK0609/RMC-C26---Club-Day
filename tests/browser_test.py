@@ -29,7 +29,7 @@ def report(name, ok, detail=''):
 
 
 async def enter(p, idx, value):
-    await p.js(f"document.querySelectorAll('.game-card')[{idx}].click()")
+    await p.js(f"document.querySelectorAll('#game-cards .game')[{idx}].click()")
     await p.wait_for(f"{g('game-dialog')}.open")
     await p.js(f"{g('gd-input')}.value = '{value}'; {g('gd-save')}.click()")
     return await p.wait_for(f"!{g('game-dialog')}.open")
@@ -83,18 +83,28 @@ async def run(ids):
         report('Start -> results screen', await p.wait_for(f"{SCREEN} === 'results'"))
         report('URL becomes the personal link', await p.js("location.search.startsWith('?id=')"))
 
-        await p.js("document.querySelectorAll('.game-card')[1].click()")
+        report('new egg has no cracks', await p.js("document.querySelectorAll('#egg-svg use').length === 1"))
+        await p.js("document.querySelectorAll('#game-cards .game')[1].click()")
         await p.wait_for(f"{g('game-dialog')}.open")
         await p.js(f"{g('gd-input')}.value = '-3'; {g('gd-save')}.click()")
         report('invalid number shows an error', await p.wait_for(f"!{g('gd-error')}.hidden"))
         await p.js(f"{g('gd-input')}.value = ''; for (let i = 0; i < 8; i++) {g('gd-plus')}.click()")
         await p.shot(SHOTS / 'p3-dialog.png')
         await p.js(f"{g('gd-save')}.click()")
-        report('+ button x8 then Save -> card shows check and 8',
-               await p.wait_for("document.querySelectorAll('.game-status')[1].textContent === '✓ 8'"))
+        report('+ button x8 then Save -> game shows 8',
+               await p.wait_for("document.querySelectorAll('#game-cards .lcd')[1].textContent === '8'"))
+        report('each game entered adds a crack to the egg', await p.js("document.querySelectorAll('#egg-svg use').length === 2"))
         report('summary hidden until all 3 games', await p.js(f"{g('confirm')}.hidden"))
         await enter(p, 0, 2)
-        await enter(p, 2, 4)
+        await p.js("document.querySelectorAll('#game-cards .game')[2].click()")
+        await p.wait_for(f"{g('game-dialog')}.open")
+        report('Game 3 shows number buttons 0-9 instead of typing',
+               await p.js("document.querySelectorAll('#gd-picker button').length === 10 && document.getElementById('gd-stepper').hidden"))
+        await p.js("document.querySelectorAll('#gd-picker button')[4].click()")
+        report('tapping a number selects it', await p.js(
+            f"{g('gd-input')}.value === '4' && document.querySelectorAll('#gd-picker button')[4].getAttribute('aria-checked') === 'true'"))
+        await p.js(f"{g('gd-save')}.click()")
+        await p.wait_for(f"!{g('game-dialog')}.open")
         report('summary appears after all 3', await p.wait_for(f"!{g('confirm')}.hidden"))
         summary = await p.js(f"{g('summary')}.textContent")
         report('summary text matches the spec', summary == 'Game 1: 2 · Game 2: 8 · Game 3: 4 — Is this correct?', summary)
@@ -113,7 +123,7 @@ async def run(ids):
         await p.js(f"{g('yes')}.click()")
         report('Yes -> pet screen', await p.wait_for(f"{SCREEN} === 'pet'"))
         pet = await p.js(f"{g('pet-name')}.textContent")
-        report('80 points -> Adult Pet', pet == 'Adult Pet', pet)
+        report('80 points -> Adult Mindchi', pet == 'Adult Mindchi', pet)
         report('mini leaderboard shows the player, highlighted',
                await p.wait_for("document.querySelector('#mini-board li.me')?.textContent.includes('(you)')"))
         report('pet screen shows no score', '80' not in await p.js("document.getElementById('pet').innerText"))
@@ -133,7 +143,7 @@ async def run(ids):
         secs = await p.wait_for("document.querySelector('#mini-board li .name')?.textContent === 'zz_test_Live'", 10)
         report(f'player mini leaderboard updates live ({secs}s)', secs is not None and secs < 6, secs)
         report('#1 row is highlighted with a crown',
-               await b.js("document.querySelector('#board li').className === 'first' && document.querySelector('#board li .rank').textContent === '👑'"))
+               await b.js("document.querySelector('#board li').classList.contains('t1') && !!document.querySelector('#board li .rk svg')"))
         await b.shot(SHOTS / 'b1-board.png')
 
         # ---------- Admin ----------
@@ -154,11 +164,11 @@ async def run(ids):
         await a.js(f"{g('finish')}.click()")
         secs = await w.wait_for(f"!{g('final')}.hidden", 10)
         report(f'Finish reaches the winner phone live ({secs}s)', secs is not None and secs < 5, secs)
-        text = await w.js(f"{g('final')}.textContent")
-        report('winner sees the spec message', text == "Congratulations! You're #1! 🏆 Come back to the Mind Club booth to claim your prize.", text)
+        text = await w.js(f"{g('final-title')}.textContent + ' ' + {g('final-text')}.textContent")
+        report('winner sees the spec message', text == "Congratulations! You're #1! Come back to the Mind Club booth to claim your prize.", text)
         await w.shot(SHOTS / 'p6-winner.png')
         await p.wait_for(f"!{g('final')}.hidden", 10)
-        text = await p.js(f"{g('final')}.textContent")
+        text = await p.js(f"{g('final-card')}.innerText")
         report('other players see their rank', text.startswith('Thanks for playing! You finished #'), text)
         report('other players are asked to come to the booth', 'Come to the Mind Club booth now' in text, text)
         report('unconfirmed player sees "results closed"', await d.wait_for(f"{SCREEN} === 'closed'", 10))
@@ -177,10 +187,10 @@ async def run(ids):
         await a.js(f"{g('skip')}.click()")
         report(f'Skip moves the invitation to #2 ({second}) on the iPad',
                await b.wait_for(f"{g('claim')}.textContent.includes('{second}')", 10))
-        text = await w.wait_for(f"{g('final')}.textContent.startsWith('Thanks for playing! You finished #1')", 10)
+        text = await w.wait_for(f"{g('final-card')}.innerText.startsWith('Thanks for playing! You finished #1')", 10)
         report('skipped player now sees "You finished #1"', text)
         report('the newly invited player (#2) sees the winner message',
-               await p.wait_for(f"{g('final')}.textContent.startsWith('Congratulations')", 10) if second == 'zz_test_New' else True)
+               await p.wait_for(f"{g('final-card')}.innerText.startsWith('Congratulations')", 10) if second == 'zz_test_New' else True)
 
         # 1st prize to #2 (since #1 was skipped), then the 2nd prize moves on to #3
         await a.wait_for(f"!{g('given')}.disabled")
