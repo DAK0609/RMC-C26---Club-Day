@@ -1,7 +1,7 @@
 // Player page (index.html): welcome → enter 3 games → pet → final result after Finish.
 import * as api from '../api.js';
 import { keepFresh } from '../live.js';
-import { $, el, showScreen, fitFirstScreens, prizeSlots, busy, toast, connectionBanner } from '../ui.js';
+import { $, el, showScreen, prizeSlots, busy, toast, connectionBanner } from '../ui.js';
 import { GAMES } from '../games.js';
 import { petFor } from '../pets.js';
 import { COPY } from '../copy.js';
@@ -143,15 +143,9 @@ function renderCards() {
 
   $('game-cards').replaceChildren(...GAMES.map((g, i) => gameButton(g, i, d[g.key])));
 
-  // Ready: the egg and the check card fill the first screen; the games start below it.
+  // Ready: the check card appears above the games.
   $('summary').textContent = COPY.summary(d);
   $('confirm').hidden = !ready;
-  $('results-top').classList.toggle('first-screen', ready);
-  if (!ready) {
-    $('results-top').style.minHeight = '';
-    $('results-top').querySelector('.next').hidden = true;
-  }
-  fitFirstScreens();
 }
 
 function gameButton(g, i, value) {
@@ -304,7 +298,7 @@ function renderMiniBoard() {
   $('rank-live').hidden = state.finished;
 }
 
-// After Finish, a card fills the first screen. The player being called gets a pulsing pink
+// After Finish, a card sits above the device. The player being called gets a pulsing pink
 // card; everyone else is asked to come to the booth too (a prize can move down the line to
 // them) and sees the same 3 prize slots as the iPad.
 let buzzed = null; // the card the phone last vibrated for
@@ -327,7 +321,6 @@ function renderFinal() {
   $('final-text').textContent = msg.text;
   $('prizes').hidden = pink;
   if (!pink) $('prizes').replaceChildren(...prizeSlots(state, prize, calling, winnerNames));
-  $('final-next').textContent = isWinner ? 'Scroll down for your Mindchi and rank' : 'Scroll down to see your Mindchi';
 
   const kind = isWinner ? 'invited' : 'finished';
   if (buzzed !== kind) navigator.vibrate?.([200, 100, 200]); // Android only; ignored elsewhere

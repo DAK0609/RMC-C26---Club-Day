@@ -113,12 +113,11 @@ Full app logic on a structure meant to be built on; UI is basic.
 ### Phase 2 — Branding & UI ✅ (done 30 Oct)
 Approved wireframes: `design/wireframes.html` (open the file directly). Pets are called **Mindchi** (Baby / Teenager / Adult Mindchi).
 1. ✅ Palette as CSS variables, Fredoka font, sticker card/button styles
-2. ✅ Player page: Tamagotchi shell with the club logo, egg that cracks once per game and hatches after Yes, tap-a-number pop-ups (Game 1 and 3), live rank, full-screen card after Finish with the 3 prize slots
-3. ✅ Long screens end with a "Scroll down for…" label at the bottom of the first screen instead of cutting a section in half (player pages only)
-4. ✅ Leaderboard: top 10 always fits (iPad sideways or upright, 1024×700 and up), auto QR code, rows slide on rank change, prize call after Finish
-5. ✅ Admin: plain, big buttons, prize handout card, G1/G2/G3 per player, works on phone and iPad
-6. ✅ Checked on iPhone 12–16, iPhone SE, iPad (both ways) and older iPad sizes; tests 24/24 + 49/49
-7. ✅ Pet images in `img/pets/`
+2. ✅ Player page: Tamagotchi shell with the club logo, egg that cracks once per game and hatches after Yes, tap-a-number pop-ups (Game 1 and 3), live rank, a card after Finish with the 3 prize slots
+3. ✅ Leaderboard: top 10 always fits (iPad sideways or upright, 1024×700 and up), auto QR code, rows slide on rank change, prize call after Finish
+4. ✅ Admin: plain, big buttons, prize handout card, G1/G2/G3 per player, works on phone and iPad
+5. ✅ Checked on iPhone 12–16, iPhone SE, iPad (both ways) and older iPad sizes; tests 24/24 + 49/49
+6. ✅ Pet images in `img/pets/`
 
 ### Phase 3 — Robustness & admin tools (≈3 hours) · Sun 1 Nov
 1. Admin protection (decision #2, pending team meeting)

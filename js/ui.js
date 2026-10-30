@@ -6,52 +6,7 @@ export const $ = (id) => document.getElementById(id);
 // Shows the <section class="screen"> with this id and hides the others.
 export function showScreen(id) {
   document.querySelectorAll('.screen').forEach((s) => { s.hidden = s.id !== id; });
-  fitFirstScreens();
 }
-
-// "Scroll down for…" labels. A long screen's .first-screen part is stretched to the phone's
-// height, so its label sits at the bottom edge and the next section starts just below it.
-// The label is hidden instead when everything fits, or when stretching would leave a big
-// empty gap (tall screens like an iPad, where the next section is plainly visible). A part
-// marked data-fill has a card that grows into the space, so it never leaves a gap.
-// The height is read once at load (browser bars showing) and again only when the width
-// changes, because iPhone Safari resizes the window while you scroll.
-let screenHeight = innerHeight;
-let screenWidth = innerWidth;
-
-export function fitFirstScreens() {
-  for (const first of document.querySelectorAll('.first-screen')) {
-    if (!first.offsetParent) continue; // hidden
-    const label = first.querySelector('.next');
-    first.style.minHeight = '';
-    label.hidden = false;
-    const top = first.getBoundingClientRect().top + scrollY;
-    const height = screenHeight - top - 12;
-    const gap = first.hasAttribute('data-fill') ? 0 : height - first.offsetHeight;
-    // Also hidden when this part starts below the first screen (e.g. the pet under the Finish card)
-    if (document.documentElement.scrollHeight <= screenHeight || gap > screenHeight * 0.4 || top >= screenHeight) {
-      label.hidden = true;
-      continue;
-    }
-    first.style.minHeight = `${height}px`;
-  }
-}
-
-addEventListener('resize', () => {
-  if (innerWidth === screenWidth) return;
-  screenWidth = innerWidth;
-  screenHeight = innerHeight;
-  fitFirstScreens();
-});
-document.fonts?.ready.then(fitFirstScreens);
-
-// A label scrolls to the section named in its data-to.
-document.addEventListener('click', (e) => {
-  const label = e.target.closest('.next');
-  if (!label) return;
-  const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  $(label.dataset.to)?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' });
-});
 
 // Creates an element with an optional class and text. Text is never parsed
 // as HTML, so this is safe for nicknames.
