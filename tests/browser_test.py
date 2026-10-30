@@ -94,7 +94,7 @@ async def run(ids):
         report('+ button x8 then Save -> game shows 8',
                await p.wait_for("document.querySelectorAll('#game-cards .lcd')[1].textContent === '8'"))
         report('each game entered adds a crack to the egg', await p.js("document.querySelectorAll('#egg-svg use').length === 2"))
-        report('summary hidden until all 3 games', await p.js(f"{g('confirm')}.hidden"))
+        report("egg can't hatch until all 3 games", await p.js(f"{g('yes')}.disabled && {g('edit')}.hidden"))
         await enter(p, 0, 2)
         await p.js("document.querySelectorAll('#game-cards .game')[2].click()")
         await p.wait_for(f"{g('game-dialog')}.open")
@@ -105,23 +105,25 @@ async def run(ids):
             f"{g('gd-input')}.value === '4' && document.querySelectorAll('#gd-picker button')[4].getAttribute('aria-checked') === 'true'"))
         await p.js(f"{g('gd-save')}.click()")
         await p.wait_for(f"!{g('game-dialog')}.open")
-        report('summary appears after all 3', await p.wait_for(f"!{g('confirm')}.hidden"))
-        summary = await p.js(f"{g('summary')}.textContent")
-        report('summary text matches the spec', summary == 'Game 1: 2 · Game 2: 8 · Game 3: 4 — Is this correct?', summary)
-        await p.shot(SHOTS / 'p4-summary.png')
+        report('after all 3, the egg can be tapped to hatch', await p.wait_for(f"!{g('yes')}.disabled && !{g('edit')}.hidden"))
+        report('while the egg is ready, the 3 games only show their numbers',
+               await p.js("document.querySelectorAll('#game-cards button').length === 0 && document.querySelectorAll('#game-cards .game').length === 3"))
+        text = await p.js(f"{g('egg-count')}.textContent")
+        report('the egg says to tap it', text.startswith('Tap the egg to hatch it!'), text)
+        await p.shot(SHOTS / 'p4-ready.png')
 
         await p.js(f"{g('edit')}.click()")
-        report('Edit hides the summary', await p.wait_for(f"{g('confirm')}.hidden"))
+        report('Edit stops the egg from hatching', await p.wait_for(f"{g('yes')}.disabled && {g('edit')}.hidden"))
         await enter(p, 2, 4)
-        report('saving again brings the summary back', await p.wait_for(f"!{g('confirm')}.hidden"))
+        report('saving again makes the egg ready again', await p.wait_for(f"!{g('yes')}.disabled"))
 
         await p.go(await p.js('location.href'))
-        report('reloading keeps the saved games', await p.wait_for(f"!{g('confirm')}.hidden"))
+        report('reloading keeps the saved games', await p.wait_for(f"!{g('yes')}.disabled"))
         await p.go(L + '/')
         report('reopening the plain QR link restores progress', await p.wait_for(f"{SCREEN} === 'results'"))
 
         await p.js(f"{g('yes')}.click()")
-        report('Yes -> pet screen', await p.wait_for(f"{SCREEN} === 'pet'"))
+        report('tapping the egg -> it hatches into the pet screen', await p.wait_for(f"{SCREEN} === 'pet'"))
         pet = await p.js(f"{g('pet-name')}.textContent")
         report('80 points -> Adult Mindchi', pet == 'Adult Mindchi', pet)
         report('mini leaderboard shows the player, highlighted',

@@ -34,7 +34,7 @@ let myRank = null;   // this player's leaderboard row, once confirmed
 let top = [];        // the first MINI_TOP leaderboard rows, once confirmed
 let calling = null;  // after Finish: the leaderboard row invited for the current prize
 let winnerNames = new Map(); // after Finish: id → nickname of each prize winner
-let editing = false; // true after "Edit": hide the summary until the next save
+let editing = false; // true after "Edit": the egg can't hatch until the next save
 let current = null;  // the game open in the pop-up
 let saves = 0;       // counts this phone's saves, so an older refresh can't undo one
 let hatchNext = false; // set by "Yes": the pet hatches when it first appears
@@ -134,30 +134,32 @@ function renderCards() {
   // The egg gets one crack per game entered. With all 3 in, it's big and shakes fast.
   $('egg-svg').innerHTML = '<use href="#egg"/>' + ['crack1', 'crack2', 'crack3'].slice(0, entered)
     .map((id) => `<use href="#${id}"/>`).join('');
-  $('egg-svg').setAttribute('aria-label', `Your egg: ${entered} of 3 games entered`);
   $('egg-svg').classList.toggle('fast', ready);
+  $('yes').disabled = !ready;
+  $('yes').setAttribute('aria-label', ready ? 'Hatch your egg. Your numbers lock after this.' : `Your egg: ${entered} of 3 games entered`);
   $('egg-display').classList.toggle('compact', !ready);
   $('egg-title').textContent = ready ? 'Ready to hatch!' : `${player.nickname}'s egg`;
-  $('egg-count').textContent = `${entered} of 3 games entered`;
+  $('egg-count').textContent = ready ? 'Tap the egg to hatch it! Your numbers lock after this.' : `${entered} of 3 games entered`;
   [...$('egg-pips').children].forEach((pip, i) => pip.classList.toggle('on', i < entered));
 
-  $('game-cards').replaceChildren(...GAMES.map((g, i) => gameButton(g, i, d[g.key])));
+  // While the egg is ready to hatch, the games just show their numbers; "Edit" unlocks them.
+  $('game-cards').replaceChildren(...GAMES.map((g, i) => gameCard(g, i, d[g.key], ready)));
 
-  // Ready: the check card appears above the games.
-  $('summary').textContent = COPY.summary(d);
-  $('confirm').hidden = !ready;
+
+  $('edit').hidden = !ready;
 }
 
-function gameButton(g, i, value) {
+function gameCard(g, i, value, locked) {
   const done = value != null;
-  const button = el('button', 'game');
-  button.type = 'button';
+  const button = el(locked ? 'div' : 'button', 'game');
+  if (!locked) button.type = 'button';
   button.innerHTML = `<img src="${g.img}" alt=""><span><small>Game ${i + 1}</small><strong>${g.name}</strong>`
     + (done ? '</span>' : '<em>Tap after you play</em></span>')
     + (done ? `<span class="lcd">${value}</span>`
       : '<span class="lcd empty"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></span>');
-  button.setAttribute('aria-label', `Game ${i + 1}, ${g.name}: ${done ? `${value}. Tap to change.` : 'not entered yet.'}`);
-  button.onclick = () => openGame(g, i);
+  button.setAttribute('aria-label', `Game ${i + 1}, ${g.name}: ${done ? value : 'not entered yet'}.`
+    + (locked ? '' : done ? ' Tap to change.' : ''));
+  if (!locked) button.onclick = () => openGame(g, i);
   return button;
 }
 
@@ -238,7 +240,7 @@ $('edit').onclick = () => {
   renderCards();
 };
 
-// "Yes" saves and locks the entry forever.
+// Tapping the ready egg saves and locks the entry forever, then it hatches.
 $('yes').onclick = () => busy($('yes'), async () => {
   try {
     player = await api.confirmResults(player.id, draft());

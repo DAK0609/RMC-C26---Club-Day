@@ -23,7 +23,7 @@ Three pages, each with its own link, sharing one live database:
 ```
 Scan QR → [1] Welcome + nickname → Start
         → play Game 1, 2, 3 at the booth (host tells the number)
-        → [2] Enter 3 numbers → summary "Is this correct?" → Yes (locked forever) / Edit
+        → [2] Enter 3 numbers → tap the egg to hatch (locked forever) / Edit
         → [3] Pet reveal (Baby / Teenager / Adult) + live mini leaderboard (top 5 + own rank, no points)
         → (keep the page open) at Finish: invited player gets "Congratulations!", everyone else "You finished #12. Come to the Mind Club booth now!"
 ```
@@ -113,7 +113,7 @@ Full app logic on a structure meant to be built on; UI is basic.
 ### Phase 2 — Branding & UI ✅ (done 30 Oct)
 Approved wireframes: `design/wireframes.html` (open the file directly). Pets are called **Mindchi** (Baby / Teenager / Adult Mindchi).
 1. ✅ Palette as CSS variables, Fredoka font, sticker card/button styles
-2. ✅ Player page: Tamagotchi shell with the club logo, egg that cracks once per game and hatches after Yes, tap-a-number pop-ups (Game 1 and 3), live rank, a card after Finish with the 3 prize slots
+2. ✅ Player page: Tamagotchi shell with the club logo, egg that cracks once per game and hatches when the player taps it (Edit below to change numbers), tap-a-number pop-ups (Game 1 and 3), live rank, a card after Finish with the 3 prize slots
 3. ✅ Leaderboard: top 10 always fits (iPad sideways or upright, 1024×700 and up), auto QR code, rows slide on rank change, prize call after Finish
 4. ✅ Admin: plain, big buttons, prize handout card, G1/G2/G3 per player, works on phone and iPad
 5. ✅ Checked on iPhone 12–16, iPhone SE, iPad (both ways) and older iPad sizes; tests 24/24 + 49/49

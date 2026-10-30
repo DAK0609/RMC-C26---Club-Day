@@ -66,9 +66,8 @@
         <p id="welcome-notice" class="notice" hidden></p>
         <div class="field">
           <label for="nickname">Your nickname</label>
-          <input id="nickname" placeholder="e.g. Brainy Bao" maxlength="20" autocomplete="off" required
+          <input id="nickname" placeholder="e.g. Brainy" maxlength="20" autocomplete="off" required
                  aria-describedby="nickname-help">
-          <small id="nickname-help">Shown on the leaderboard.</small>
         </div>
         <button id="start" class="btn block">Start</button>
       </form>
@@ -81,7 +80,7 @@
       </ol>
       <div class="note">
         <svg class="ic f-white" aria-hidden="true"><use href="#i-trophy"/></svg>
-        <div><b>The top 3 players win prizes!</b>Keep an eye on the leaderboard and come back to the Mind Club booth at 3:45 PM to claim yours. If a winner isn't there, their prize goes to the next player in line.</div>
+        <div><b>Top 3 win prizes!</b><span>Come back to the Mind Club booth at 3:45 PM.</span><small>Not there? The prize goes to the next player.</small></div>
       </div>
     </div>
     <dialog id="taken" class="modal">
@@ -96,22 +95,15 @@
   <section id="results" class="screen" hidden>
     <div id="results-top">
       <div id="egg-display" class="display compact">
-        <svg id="egg-svg" class="egg wobble" viewBox="0 0 120 150" role="img"></svg>
+        <!-- With all 3 games in, the egg itself is the button: tapping it hatches (locks the numbers) -->
+        <button id="yes" class="egg-btn" disabled><svg id="egg-svg" class="egg wobble" viewBox="0 0 120 150" aria-hidden="true"></svg></button>
         <h1 id="egg-title"></h1>
         <p id="egg-count"></p>
         <div id="egg-pips" class="pips" aria-hidden="true"><i></i><i></i><i></i></div>
       </div>
-      <div id="confirm" class="sticker confirm" hidden>
-        <h2 id="summary"></h2>
-        <p class="warn">After Yes, your numbers are locked.</p>
-        <div class="actions">
-          <button id="edit" class="btn white">Edit</button>
-          <button id="yes" class="btn">Yes, show my Mindchi!</button>
-        </div>
-      </div>
+      <button id="edit" class="btn white block" hidden>Edit</button>
     </div>
     <div id="games" class="below">
-      <p class="hint">Tap a game after you play it and enter the number your game host tells you.</p>
       <div id="game-cards" class="games"></div>
     </div>
 
@@ -163,7 +155,7 @@
       </div>
       <div class="note">
         <svg class="ic f-white" aria-hidden="true"><use href="#i-trophy"/></svg>
-        <div><b>Prizes at 3:45 PM</b>The top 3 players will receive prizes at the Mind Club booth. Keep this page open, it updates by itself.</div>
+        <div><b>Top 3 win prizes at 3:45 PM</b><span>Come to the Mind Club booth.</span><small>Keep this page open, it updates by itself.</small></div>
       </div>
     </div>
   </section>
