@@ -39,7 +39,7 @@ Scan QR → [1] Welcome + nickname → Start
 - Game 1: 0→5, 1→10, 2→20, 3→30
 - Game 2: n<7 → 5, n≥7 → 20 + 10×(n−7)
 - Game 3: n<3 → 5, n≥3 → 20 + 10×(n−3)
-- Pet: total <30 Baby · 30–59 Teenager · ≥60 Adult
+- Mindchi: total ≤40 Baby · 41–59 Teenager · ≥60 Adult
 - Tie: whoever confirmed first ranks higher
 
 ---
