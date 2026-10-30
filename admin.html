@@ -1,31 +1,39 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mind Club — Quản lý</title>
+  <meta name="robots" content="noindex">
+  <title>Mind Club — Admin</title>
+  <link rel="icon" href="img/RMC_logo.jpg">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin">
-  <h1>Trang quản lý</h1>
-  <p id="status"></p>
-  <button id="finish">Finish</button>
+  <h1>Admin</h1>
 
-  <section id="prize" hidden>
-    <h2>Trao quà</h2>
-    <p>Đang mời: <strong id="winner"></strong></p>
-    <button id="given">Đã trao quà</button>
-    <button id="skip" class="secondary">Bỏ qua</button>
+  <section class="card">
+    <p id="stats"></p>
+    <p id="status"></p>
+    <button id="finish" hidden>Finish</button>
+    <button id="reopen" class="secondary" hidden>Reopen</button>
   </section>
 
-  <section>
-    <h2>Người chơi</h2>
+  <section id="prize" class="card" hidden>
+    <h2>Prize handout</h2>
+    <p>Now inviting: <strong id="winner"></strong></p>
+    <button id="given">Prize given</button>
+    <button id="skip" class="secondary">Skip</button>
+  </section>
+
+  <section class="card">
+    <h2>Full ranking</h2>
     <table>
-      <thead><tr><th>#</th><th>Biệt danh</th><th>G1</th><th>G2</th><th>G3</th><th>Tổng</th><th></th></tr></thead>
+      <thead><tr><th>#</th><th>Nickname</th><th>G1</th><th>G2</th><th>G3</th><th>Total</th><th></th></tr></thead>
       <tbody id="players"></tbody>
     </table>
+    <p id="no-players" hidden>No one has confirmed their results yet.</p>
   </section>
 
-  <script type="module" src="js/admin.js"></script>
+  <script type="module" src="js/pages/admin.js"></script>
 </body>
 </html>

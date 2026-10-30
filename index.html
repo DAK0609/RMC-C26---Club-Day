@@ -4,9 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mind Club</title>
+  <link rel="icon" href="img/RMC_logo.jpg">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="player">
+  <img class="logo" src="img/RMC_logo.jpg" alt="RMIT Mind Club">
+
+  <!-- Shown until the first load finishes, so returning players don't see the welcome screen flash -->
+  <section id="loading" class="screen">
+    <p>Loading…</p>
+  </section>
+
   <!-- Screen 1: Welcome -->
   <section id="welcome" class="screen" hidden>
     <h1>Hello, welcome to Mind Club! 👋</h1>
@@ -14,9 +22,10 @@
        Finish all 3 to discover which virtual pet is waiting for you!</p>
     <p>🏆 Keep an eye on the leaderboard and come back to the Mind Club booth at 3:45 PM to claim
        your prize if you're the winner! If the winner isn't there, the prize goes to the next player in line.</p>
+    <p id="welcome-notice" class="notice" hidden></p>
     <form id="welcome-form">
-      <input id="nickname" placeholder="Your nickname" maxlength="20" required>
-      <button>Start</button>
+      <input id="nickname" placeholder="Your nickname" maxlength="20" autocomplete="off" required>
+      <button id="start">Start</button>
     </form>
     <dialog id="taken">
       <p>⚠️ This username has been taken. Please choose another one.</p>
@@ -46,7 +55,7 @@
           <button type="button" id="gd-plus" class="secondary" aria-label="Increase">+</button>
         </div>
         <p id="gd-error" class="error" hidden></p>
-        <button>Save</button>
+        <button id="gd-save">Save</button>
         <button type="button" id="gd-cancel" class="secondary">Cancel</button>
       </form>
     </dialog>
@@ -57,10 +66,15 @@
     <img id="pet-img" alt="">
     <h2 id="pet-name"></h2>
     <p id="pet-text"></p>
-    <p class="reminder">🏆 Reminder: The #1 player will receive a prize at 3:45 PM at the Mind Club booth. Don't miss it!</p>
     <div id="final" class="banner" hidden></div>
+    <p class="reminder">🏆 Reminder: The #1 player will receive a prize at 3:45 PM at the Mind Club booth. Don't miss it!</p>
   </section>
 
-  <script type="module" src="js/player.js"></script>
+  <!-- After Finish, for players who never confirmed (or never joined) -->
+  <section id="closed" class="screen" hidden>
+    <p id="closed-text" class="card"></p>
+  </section>
+
+  <script type="module" src="js/pages/player.js"></script>
 </body>
 </html>

@@ -14,6 +14,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; } /* classes with display: flex/grid must not override hidden */
 body { margin: 0 auto; padding: 1.5rem; max-width: 32rem; font: 18px/1.5 'Fredoka', system-ui, sans-serif;
        background: var(--sky); color: var(--ink); text-align: center; }
 h1, h2, h3 { line-height: 1.2; }
@@ -30,6 +31,16 @@ label { display: block; text-align: left; margin: .6rem 0; }
 .hint, .reminder { font-size: .95rem; }
 .error { color: #c0203a; font-weight: 600; }
 #pet-img { width: 60%; max-width: 240px; }
+.logo { width: 6rem; border: var(--outline); border-radius: 1.2rem; }
+.notice { background: #fff; border: var(--outline); border-radius: 1rem; padding: .6rem; }
+.banner.winner { background: var(--pink); font-size: 1.15rem; }
+
+/* Status bars */
+.conn { position: sticky; top: 0; z-index: 10; margin: -1.5rem -1.5rem 1rem; padding: .4rem;
+        background: var(--ink); color: #fff; font-size: .9rem; }
+.toast { position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%); z-index: 20;
+         width: min(26rem, 90vw); padding: .8rem 1rem; border: var(--outline); border-radius: 1rem;
+         box-shadow: var(--shadow); background: #fff; font-weight: 600; }
 
 /* Game cards (results screen) */
 .game-cards { display: grid; gap: .9rem; }
@@ -51,16 +62,20 @@ dialog .game-img { max-width: 7rem; }
 .stepper input { width: 6rem; margin: 0; text-align: center; font-size: 1.8rem; font-weight: 700; }
 
 /* Leaderboard (iPad) */
-.leaderboard { max-width: 48rem; }
+.leaderboard { max-width: 60rem; }
+.leaderboard .banner-img { width: 100%; border: var(--outline); border-radius: 1.2rem; }
 .leaderboard ol { list-style: none; padding: 0; }
 .leaderboard li { display: flex; gap: 1rem; align-items: center; padding: .7rem 1.2rem; margin: .4rem 0;
                   background: #fff; border-radius: .8rem; font-size: 1.4rem; }
 .leaderboard li.first { font-size: 2.2rem; padding: 1.2rem; background: #ffe680; }
-.leaderboard .name { flex: 1; text-align: left; }
+.leaderboard .rank { width: 3.5rem; }
+.leaderboard .name { flex: 1; text-align: left; overflow-wrap: anywhere; }
 .leaderboard .total { font-weight: 700; }
 
 /* Admin */
 .admin { max-width: 48rem; }
 .admin table { width: 100%; border-collapse: collapse; background: #fff; }
 .admin th, .admin td { padding: .4rem; border-bottom: 1px solid #ddd; }
-.admin td button { margin: 0; padding: .3rem .8rem; }
+.admin td button { margin: 0; padding: .3rem .8rem; min-height: 0; }
+.admin tr.current { background: var(--yellow); }
+.admin .card { text-align: left; }

@@ -15,7 +15,9 @@ Three pages, each with its own link, sharing one live database:
 |---|---|---|---|
 | Player | `index.html` | Player's phone (via QR code) | English |
 | Leaderboard | `leaderboard.html` | iPad at the booth (landscape) | English |
-| Admin | `admin.html` | Organiser's phone/laptop | Vietnamese |
+| Admin | `admin.html` | Organiser's phone/laptop | English |
+
+**All on-screen text is English, including the admin page** (spec's "Đã trao quà" / "Bỏ qua" → "Prize given" / "Skip").
 
 ### Player journey
 ```
@@ -33,7 +35,7 @@ Scan QR → [1] Welcome + nickname → Start
 | Game 2 | The Skillful Hand | marbles moved in 30s | 0+ |
 | Game 3 | Ring The Right Thing | rings landed (9 rings) | 0–9 |
 
-### Scoring (already done in the database, `supabase/schema.sql`)
+### Scoring (done in the database: `supabase/migrations/001_init.sql`)
 - Game 1: 0→5, 1→10, 2→20, 3→30
 - Game 2: n<7 → 5, n≥7 → 20 + 10×(n−7)
 - Game 3: n<3 → 5, n≥3 → 20 + 10×(n−3)
@@ -96,8 +98,16 @@ The banner already shows the 3 growth stages: **egg → small brain → brain wi
 ### Phase 1 — Setup (≈1 hour) · Thu 29 – Fri 30 Oct
 1. ✅ Create the Supabase project, run `supabase/schema.sql`
 2. ✅ Put the URL + publishable key into `js/config.js`
-3. Turn on GitHub Pages for this repo, check that all 3 links open
+3. ⏸ Deploy (GitHub Pages): postponed until the UI is ready. Code is pushed; repo is private.
 4. ✅ Smoke test against the real database: join, drafts, confirm, lock, tie order, Finish, Skip, Remove, realtime
+
+### Phase 1.5 — Core workflow ✅ (done 29 Oct)
+Full app logic on a structure meant to be built on; UI is basic.
+1. ✅ Code split into modules: `api.js` (all DB calls + error codes), `live.js` (realtime + polling + wake-up refresh), `ui.js`, `copy.js`, `pages/*.js`
+2. ✅ Every screen and state: loading, welcome, results (game cards + pop-up), pet, final result, "results closed", "game has ended", entry removed
+3. ✅ Admin: live stats, Finish, Reopen (undo an accidental Finish), Prize given, Skip (safe if two people tap at once), Remove, confirm boxes
+4. ✅ Anti-cheat database rules written: `supabase/migrations/002_harden_player_writes.sql` (⏳ needs running in Supabase)
+5. ✅ Automated tests: `tests/api_test.py` (24 database checks) and `tests/browser_test.py` (38 checks playing a full event in a browser) — all pass
 
 ### Phase 2 — Branding & UI (≈4 hours) · Fri 30 – Sat 31 Oct
 1. Palette as CSS variables, Fredoka font, sticker card/button styles
@@ -109,8 +119,8 @@ The banner already shows the 3 growth stages: **egg → small brain → brain wi
 ### Phase 3 — Robustness & admin tools (≈3 hours) · Sun 1 Nov
 1. Admin protection (decision #2, pending team meeting)
 2. ✅ "Remove player" button on admin to delete fake entries
-3. Edge cases (list below)
-4. "Reconnecting…" indicator if the phone loses Wi-Fi; refresh data when it reconnects
+3. ✅ Edge cases (list below)
+4. ✅ "Reconnecting…" indicator; data refreshes on reconnect, on phone wake-up and every 15–30s
 5. ✅ Reset script: `supabase/reset.sql`
 
 ### Phase 4 — Rehearsal (≈2 hours) · Mon 2 Nov
@@ -126,7 +136,7 @@ The banner already shows the 3 growth stages: **egg → small brain → brain wi
 | 8:30 | Run `supabase/reset.sql` in SQL Editor, open leaderboard on iPad (charger plugged in, auto-lock off) | Tech lead |
 | 9:00–15:00 | Players scan QR, hosts read out numbers | Game admins |
 | 15:00–15:45 | Remind players to keep the page open | Sales |
-| 15:45 | Admin presses **Finish** → winner invited → **Đã trao quà** or **Bỏ qua** | Organiser |
+| 15:45 | Admin presses **Finish** → winner invited → **Prize given** or **Skip** | Organiser |
 | After | Export the players table (CSV) for the club's records | Tech lead |
 
 ---
@@ -143,6 +153,14 @@ The banner already shows the 3 growth stages: **egg → small brain → brain wi
 | Winner skipped, next player is #2 | #2's phone updates live, iPad shows the new name |
 | Everyone skipped | Admin shows "No more players", iPad shows "No more players in line" |
 | iPad refreshes | Full leaderboard reloads from the database |
+| Someone joins after Finish | "The game has ended. Thanks for visiting Mind Club!" |
+| Organiser removes a player | Everyone below moves up; that phone asks for a new nickname |
+| Organiser presses Finish by mistake | **Reopen** button: players can enter again, prize handout restarts from #1 |
+| Two organisers tap Skip together | Only one player is skipped |
+| Double tap on Start / Save / Yes | Button is disabled while saving, so only one entry is created |
+| Phone locked, Wi-Fi dropped | "Reconnecting…" bar; data reloads on wake-up / reconnect |
+
+All rows above are covered by `tests/api_test.py` or `tests/browser_test.py`.
 
 ---
 
