@@ -14,7 +14,7 @@ Project plan and decisions: `PLAN.md`.
 
 ## Run it locally
 ```
-python -m http.server 8000
+python serve.py        # like http.server, but browsers never cache (or double-click start.bat)
 ```
 Open http://localhost:8000, http://localhost:8000/leaderboard.html, http://localhost:8000/admin.html.
 (Opening the HTML files directly doesn't work: browsers block JS modules from `file://`.)
@@ -64,5 +64,5 @@ Scoring and ranking are computed in the database (`players.total`, `leaderboard`
 ## Event day
 1. 8:30: run `supabase/reset.sql` in the SQL Editor.
 2. Open `leaderboard.html` on the iPad (charger on, auto-lock off).
-3. 3:45 PM: on `admin.html` press **Finish**, then hand out the 1st, 2nd and 3rd prize in order:
-   **Prize given** if the invited player is there, **Skip** if not (the next player in line moves up a prize).
+3. 3:45 PM: on `admin.html` press **Finish**, then hand out the prize (one prize, for #1):
+   **Prize given** if the invited player is there, **Not here: skip** if not (the next player in line is invited).

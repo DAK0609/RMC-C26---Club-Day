@@ -199,20 +199,48 @@ dialog.sheet[open] { animation: slide-up .22s ease-out; }
 .stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
 /* ---------- Player: your pet + live rank (screen 3) ---------- */
-/* Hatching (right after "Yes"): the cracked egg shakes, splits in two, and the pet pops out */
+/* Hatching, right after the egg is tapped (about 2.5 s; player.js adds .hatching for a moment):
+   1. 0–1.2 s   the cracked egg rumbles, harder and harder
+   2. 1.2 s     flash of light, the screen jolts, the shell splits, chips and sparkles burst out
+   3. 1.3–2.4 s the Mindchi pops out with a bounce, then its name drops in and the text fades up */
 .hatch { position: relative; display: grid; place-items: center; height: 150px; margin: 2px 0 8px; }
 .pet-img { height: 150px; width: auto; max-width: 100%; object-fit: contain; }
-.half { position: absolute; top: 50%; left: 50%; display: none; width: 96px; height: 120px; margin: -60px 0 0 -48px; }
+.half { position: absolute; top: 50%; left: 50%; display: none; width: 120px; height: 150px; margin: -75px 0 0 -60px; }
 .half.top { clip-path: polygon(0 0, 100% 0, 100% 57%, 88% 51%, 77% 58%, 65% 50%, 53% 59%, 41% 50%, 29% 58%, 17% 50%, 0 57%); }
 .half.bottom { clip-path: polygon(0 57%, 17% 50%, 29% 58%, 41% 50%, 53% 59%, 65% 50%, 77% 58%, 88% 51%, 100% 57%, 100% 100%, 0 100%); }
-.hatching .half { display: block; }
-.hatching .half.top { animation: shake .7s ease-in-out, fly-up .5s .7s ease-in forwards; }
-.hatching .half.bottom { animation: shake .7s ease-in-out, fly-down .5s .7s ease-in forwards; }
-.hatching .pet-img { animation: pop .6s .85s cubic-bezier(.3, 1.6, .5, 1) both; }
-@keyframes shake { 20% { rotate: -10deg; } 40% { rotate: 9deg; } 60% { rotate: -7deg; } 80% { rotate: 5deg; } }
-@keyframes fly-up { to { translate: -10px -70px; rotate: -25deg; opacity: 0; } }
-@keyframes fly-down { to { translate: 6px 40px; rotate: 10deg; opacity: 0; } }
-@keyframes pop { from { scale: .2; opacity: 0; } }
+.burst, .spark, .chip { position: absolute; top: 50%; left: 50%; display: none; pointer-events: none; }
+.hatching .half, .hatching .burst, .hatching .spark, .hatching .chip { display: block; }
+
+.hatching { animation: jolt .35s 1.2s ease-out; }
+.hatching .half.top { animation: rumble 1.2s ease-in, fly-up .6s 1.2s cubic-bezier(.2, .7, .3, 1) forwards; }
+.hatching .half.bottom { animation: rumble 1.2s ease-in, fly-down .6s 1.2s cubic-bezier(.2, .7, .3, 1) forwards; }
+.burst { width: 240px; height: 240px; margin: -120px 0 0 -120px; border-radius: 50%; opacity: 0;
+         background: radial-gradient(circle, #fff 0 28%, rgb(248 232 120 / .9) 44%, rgb(254 157 192 / .5) 58%, transparent 70%); }
+.hatching .burst { animation: burst .7s 1.15s ease-out both; }
+.spark { width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); background: var(--c); opacity: 0;
+         clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
+.hatching .spark { animation: fly-out .9s 1.2s cubic-bezier(.15, .8, .3, 1) both; }
+.chip { width: 12px; height: 10px; margin: -5px 0 0 -6px; background: #FFF7FA; border: 2px solid var(--ink); border-radius: 3px; opacity: 0; }
+.hatching .chip { animation: fly-out .8s 1.2s cubic-bezier(.2, .6, .4, 1) both; }
+.hatching .pet-img { transform-origin: 50% 90%; animation: pop .9s 1.3s cubic-bezier(.3, 1.5, .5, 1) both; }
+.hatching .wordmark { animation: drop .6s 1.9s cubic-bezier(.3, 1.6, .5, 1) both; }
+.hatching #pet-text { animation: fade-up .5s 2.1s ease-out both; }
+
+@keyframes rumble {
+  0% { rotate: 0deg; } 8% { rotate: -4deg; } 16% { rotate: 4deg; } 24% { rotate: -5deg; } 32% { rotate: 5deg; }
+  40% { rotate: -7deg; } 48% { rotate: 7deg; } 56% { rotate: -9deg; } 64% { rotate: 9deg; }
+  72% { rotate: -11deg; translate: 0 -2px; } 80% { rotate: 11deg; } 88% { rotate: -13deg; translate: 0 -4px; }
+  94% { rotate: 12deg; } 100% { rotate: 0deg; scale: 1.08; } }
+@keyframes fly-up { from { scale: 1.08; } to { translate: -30px -110px; rotate: -50deg; opacity: 0; } }
+@keyframes fly-down { from { scale: 1.08; } to { translate: 20px 60px; rotate: 25deg; opacity: 0; } }
+@keyframes jolt { 30% { translate: 0 4px; } 60% { translate: 0 -2px; } }
+@keyframes burst { 0% { opacity: 0; scale: .2; } 25% { opacity: 1; } 100% { opacity: 0; scale: 2.2; } }
+/* --a direction, --d distance, --r spin: set per piece in player.js */
+@keyframes fly-out { 0% { opacity: 1; transform: rotate(var(--a)) translateY(0) scale(.3); } 70% { opacity: 1; }
+                     100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(var(--d) * -1)) rotate(var(--r, 180deg)) scale(1); } }
+@keyframes pop { 0% { scale: .1; opacity: 0; } 40% { scale: 1.2 .9; opacity: 1; } 60% { scale: .92 1.08; } 80% { scale: 1.04 .97; } 100% { scale: 1; } }
+@keyframes drop { from { translate: 0 -30px; scale: 1.4; opacity: 0; } }
+@keyframes fade-up { from { translate: 0 8px; opacity: 0; } }
 
 /* The pet's name, lettered like the logo (same outline as .brand, bigger) */
 .wordmark { margin: 2px 0 8px; font: 700 38px/1.1 var(--font); letter-spacing: .5px;
@@ -258,7 +286,7 @@ dialog.sheet[open] { animation: slide-up .22s ease-out; }
 @keyframes pulse { 50% { box-shadow: 6px 6px 0 var(--ink), 0 0 0 10px rgb(255 255 255 / .75); } }
 
 /* The 3 prize slots: the same on the phone, the iPad and admin */
-.prizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.prizes { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
 .prize { padding: 8px 4px 10px; text-align: center; font-size: 14px; line-height: 1.25; background: #fff;
          border: 2.5px solid var(--ink); border-radius: 16px; }
 .prize .medal { width: 40px; height: 40px; margin: 0 auto 6px; display: grid; place-items: center;
@@ -428,6 +456,6 @@ body.admin { max-width: none; padding: 0; background: #F4F7F9; text-align: left;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .egg.wobble, dialog.sheet[open], .hatching .pet-img, .pulse { animation: none; }
-  .hatching .half { display: none; }
+  .egg.wobble, dialog.sheet[open], .pulse, .hatching, .hatching .pet-img, .hatching .wordmark, .hatching #pet-text { animation: none; }
+  .hatching .half, .hatching .burst, .hatching .spark, .hatching .chip { display: none; }
 }

@@ -265,13 +265,35 @@ function renderPet() {
   $('pet-text').textContent = pet.text;
   if (hatchNext) {
     hatchNext = false;
-    $('hatch').classList.add('hatching');
-    setTimeout(() => $('hatch').classList.remove('hatching'), 1600);
+    hatch();
   }
 
   renderMiniBoard();
   renderFinal();
   showScreen('pet');
+}
+
+// The hatch is drawn by CSS (.hatching). This adds the light burst, sparkles and shell chips the
+// first time, each flying out in its own direction, and buzzes Android phones along with the rumble.
+function hatch() {
+  const stage = $('hatch');
+  if (!stage.querySelector('.burst')) {
+    stage.prepend(el('i', 'burst'));
+    const colours = ['var(--yellow)', 'var(--pink)', 'var(--blue)', '#fff'];
+    for (let i = 0; i < 14; i++) {
+      const spark = el('i', 'spark');
+      spark.style.cssText = `--a:${i * 360 / 14}deg; --d:${90 + (i % 3) * 25}px; --c:${colours[i % 4]}; --s:${14 + (i % 3) * 6}px`;
+      stage.append(spark);
+    }
+    for (let i = 0; i < 8; i++) {
+      const chip = el('i', 'chip');
+      chip.style.cssText = `--a:${i * 45 + 20}deg; --d:${60 + (i % 2) * 30}px; --r:${i * 70}deg`;
+      stage.append(chip);
+    }
+  }
+  $('pet-display').classList.add('hatching');
+  navigator.vibrate?.([30, 50, 30, 50, 40, 40, 60, 30, 250]);
+  setTimeout(() => $('pet-display').classList.remove('hatching'), 2600);
 }
 
 // Top 5 by rank only (no points, per the spec), plus this player's own row if lower.
@@ -314,7 +336,7 @@ function renderFinal() {
     return;
   }
   const pink = isWinner || won > 0;
-  const msg = isWinner ? COPY.winner(prize) : won ? COPY.prizeReceived(won)
+  const msg = isWinner ? COPY.winner(myRank.rank) : won ? COPY.prizeReceived
     : { title: COPY.finishedRank(myRank.rank), text: prize ? COPY.comeToBooth : COPY.prizesDone };
   $('final-card').className = `callout ${pink ? 'pink' : 'yellow'}${isWinner ? ' pulse' : ''}`;
   $('final-icon').setAttribute('class', `ic ${pink ? 'f-yellow' : 'f-white'}`);

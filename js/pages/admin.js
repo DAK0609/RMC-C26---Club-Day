@@ -38,13 +38,13 @@ function renderPrize(ranked) {
   $('done').hidden = !!prize;
   const names = new Map(ranked.map((r) => [r.id, r.nickname]));
   $('ad-prizes').replaceChildren(...prizeSlots(state, prize, winner, names));
-  if (prize) $('place').textContent = `Inviting for the ${COPY.place(prize)} prize`;
+  if (prize) $('place').textContent = 'Inviting for the prize';
   $('winner').textContent = winner ? `#${winner.rank} ${winner.nickname}` : 'No more players in line';
   $('winner-scores').textContent = winner ? `${winner.total} points: ${scores(winner)}` : '';
   $('given').disabled = $('skip').disabled = !prize || !winner;
   document.querySelector('.ad-actions').hidden = !prize; // nothing left to hand out
   $('winners').replaceChildren(...state.winners.map((id, i) =>
-    el('li', '', `${COPY.place(i + 1)} prize: ${names.get(id) ?? '(removed player)'}`)));
+    el('li', '', `Prize: ${names.get(id) ?? '(removed player)'}`)));
 }
 
 const scores = (r) => `G1 ${r.g1}, G2 ${r.g2}, G3 ${r.g3}`;
@@ -58,7 +58,7 @@ function renderPlayers(ranked) {
     rank.append(el('span', r.rank <= 3 ? `tok r${r.rank}` : 'tok', r.rank));
     const name = el('td', 'nm', r.nickname);
     const won = state.winners.indexOf(r.id);
-    if (won >= 0) name.append(' ', el('span', 'tag', `${COPY.place(won + 1)} prize`));
+    if (won >= 0) name.append(' ', el('span', 'tag', COPY.prizeTag));
     tr.append(rank, name);
     for (const g of [r.g1, r.g2, r.g3]) tr.append(el('td', 'n g', g));
     tr.append(el('td', 'sc', scores(r)), el('td', 'n tot', r.total));
@@ -98,9 +98,9 @@ action($('finish'), api.finishEvent,
 action($('reopen'), api.reopenEvent,
   'Reopen? Players can submit again and the prize handout restarts from #1.');
 action($('given'), () => api.givePrize(state, winner.id),
-  () => `Confirm the ${COPY.place(api.currentPrize(state))} prize was given to ${winner?.nickname}?`);
+  () => `Confirm the prize was given to ${winner?.nickname}?`);
 action($('skip'), () => api.skipWinner(state.winner_rank),
-  () => `${winner?.nickname} is not here? The ${COPY.place(api.currentPrize(state))} prize moves to the next player in line.`);
+  () => `${winner?.nickname} is not here? The prize moves to the next player in line.`);
 
 const run = keepFresh(refresh, {
   tables: ['players', 'event_state'],

@@ -35,7 +35,7 @@ function renderBoard(top, state, prize, calling) {
   $('lb-live').hidden = state.finished;
 }
 
-// Top 3 rows use the prize colours; #1 gets a crown. After Finish, rows get a prize or "Calling" tag.
+// The top 3 rows get podium colours; #1 gets a crown. After Finish, rows get a "Winner" or "Calling" tag.
 function row(r, state, prize, calling) {
   const li = el('li', r.rank <= 3 ? `t${r.rank}` : '');
   li.dataset.id = r.id;
@@ -46,7 +46,7 @@ function row(r, state, prize, calling) {
   name.append(el('span', '', r.nickname));
   const won = state.winners.indexOf(r.id);
   if (won >= 0) {
-    name.append(el('span', 'tag', `${COPY.place(won + 1)} prize`));
+    name.append(el('span', 'tag', COPY.prizeTag));
   } else if (prize && calling?.id === r.id) {
     name.append(el('span', 'tag dark', 'Calling'));
     li.classList.add('calling');
@@ -62,10 +62,9 @@ function renderSide(state, prize, calling, names) {
   $('claim').hidden = !finished;
   $('lb-prizes').hidden = !finished;
   if (!finished) return;
-  const place = prize && COPY.place(prize);
   const [small, who, text] = !prize ? COPY.board.done
-    : calling ? COPY.board.calling(calling.nickname, place)
-    : COPY.board.nobody(place);
+    : calling ? COPY.board.calling(calling.nickname)
+    : COPY.board.nobody;
   $('call-small').textContent = small;
   $('call-who').textContent = who;
   $('call-text').textContent = text;

@@ -108,12 +108,12 @@ Full app logic on a structure meant to be built on; UI is basic.
 3. ✅ Admin: live stats, Finish, Reopen (undo an accidental Finish), Prize given, Skip (safe if two people tap at once), Remove, confirm boxes
 4. ✅ Anti-cheat database rules written: `supabase/migrations/002_harden_player_writes.sql` (⏳ needs running in Supabase)
 5. ✅ Automated tests: `tests/api_test.py` (24 database checks) and `tests/browser_test.py` (45 checks playing a full event in a browser) — all pass (30 Oct, after the mini leaderboard)
-6. ✅ Three prizes (added 30 Oct): 1st, 2nd and 3rd are handed out in order. **Skip** passes the invited player over, so the next player in line moves up a prize (e.g. #1 absent → #2 gets 1st, #3 gets 2nd, #4 gets 3rd). Admin lists who got each prize. `supabase/migrations/003_three_prizes.sql` (✅ run in Supabase 30 Oct)
+6. ✅ Prize handout (30 Oct): **one prize, for #1** (was 3 prizes until 31 Oct; `PRIZES` in `js/api.js`). **Skip** passes an absent player over, so the next player in line is invited (e.g. #1 absent → #2 gets it). `supabase/migrations/003_three_prizes.sql` (✅ run in Supabase 30 Oct)
 
 ### Phase 2 — Branding & UI ✅ (done 30 Oct)
 Approved wireframes: `design/wireframes.html` (open the file directly). Pets are called **Mindchi** (Baby / Teenager / Adult Mindchi).
 1. ✅ Palette as CSS variables, Fredoka font, sticker card/button styles
-2. ✅ Player page: Tamagotchi shell with the club logo, egg that cracks once per game and hatches when the player taps it (Edit below to change numbers), tap-a-number pop-ups (Game 1 and 3), live rank, a card after Finish with the 3 prize slots
+2. ✅ Player page: Tamagotchi shell with the club logo, egg that cracks once per game and hatches when the player taps it (Edit below to change numbers), tap-a-number pop-ups (Game 1 and 3), live rank, a card after Finish showing who's being called
 3. ✅ Leaderboard: top 10 always fits (iPad sideways or upright, 1024×700 and up), auto QR code, rows slide on rank change, prize call after Finish
 4. ✅ Admin: plain, big buttons, prize handout card, G1/G2/G3 per player, works on phone and iPad
 5. ✅ Checked on iPhone 12–16, iPhone SE, iPad (both ways) and older iPad sizes; tests 24/24 + 49/49
@@ -127,7 +127,7 @@ Approved wireframes: `design/wireframes.html` (open the file directly). Pets are
 5. ✅ Reset script: `supabase/reset.sql`
 
 ### Phase 4 — Rehearsal (≈2 hours) · Mon 2 Nov
-1. 5–10 club members on their own phones + the real iPad, run a full mock event including Finish → Skip → all 3 prizes given
+1. 5–10 club members on their own phones + the real iPad, run a full mock event including Finish → Skip → Prize given
 2. Test on iPhone Safari + Android Chrome + iPad Safari
 3. Test on venue-like conditions (mobile data, weak signal)
 4. Print the QR code (A5 standee + small stickers on each game table)
@@ -154,8 +154,7 @@ Approved wireframes: `design/wireframes.html` (open the file directly). Pets are
 | Player tries to submit after Finish | Database rejects it, page shows "Results are closed" |
 | Two players with the same nickname | Blocked with a pop-up; "Minh" and "minh " count as the same |
 | Winner skipped, next player is #2 | #2 is invited for the same prize; their phone updates live, iPad shows the new name |
-| Prize given | That player is listed on admin; the next rank is invited for the next prize |
-| All 3 prizes given | Buttons disabled; iPad shows "All 3 prizes have been awarded" |
+| Prize given | Handout over: buttons disabled; iPad shows "The prize has been awarded" |
 | Everyone skipped | Admin shows "No more players", iPad shows "No more players in line" |
 | iPad refreshes | Full leaderboard reloads from the database |
 | Someone joins after Finish | "The game has ended. Thanks for visiting Mind Club!" |
@@ -201,6 +200,6 @@ All rows above are covered by `tests/api_test.py` or `tests/browser_test.py`.
 - [ ] 3 links live on GitHub Pages, QR code printed
 - [ ] Player flow works on iPhone + Android, survives closing and reopening
 - [ ] Leaderboard updates within 2s of a submit, no reload needed
-- [ ] Finish → Skip → all 3 prizes given works end-to-end on real phones
+- [ ] Finish → Skip → Prize given works end-to-end on real phones
 - [ ] Looks like Mind Club: palette, logo, Tamagotchi frame, pet stages from the banner
 - [ ] Test data wiped the morning of the event

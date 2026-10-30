@@ -1,5 +1,6 @@
 // Small DOM helpers shared by all pages.
 import { COPY } from './copy.js';
+import { PRIZES } from './api.js';
 
 export const $ = (id) => document.getElementById(id);
 
@@ -17,10 +18,10 @@ export function el(tag, className, text) {
   return node;
 }
 
-// The 3 prize slots (1st, 2nd, 3rd), the same on the phone, the iPad and admin: who got it,
+// The prize slots (one per prize), the same on the phone, the iPad and admin: who got it,
 // who's being called now, or still waiting. `names` maps winner ids to nicknames.
 export function prizeSlots(state, prize, calling, names) {
-  return [1, 2, 3].map((n) => {
+  return Array.from({ length: PRIZES }, (_, i) => i + 1).map((n) => {
     const given = n <= state.winners.length;
     const now = n === prize;
     const name = given ? names.get(state.winners[n - 1]) ?? COPY.slot.removed

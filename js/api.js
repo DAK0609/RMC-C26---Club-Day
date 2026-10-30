@@ -31,11 +31,11 @@ export async function getState() {
   return check(await db.from('event_state').select('*').eq('id', 1).single());
 }
 
-// Prizes go to 1st, 2nd and 3rd. A skipped player is passed over, so the next
-// player in line takes their prize.
-export const PRIZES = 3;
+// One prize, for #1. A skipped player (not at the booth) is passed over, so the next
+// player in line can take it. The handout works for more prizes too: raise PRIZES.
+export const PRIZES = 1;
 
-// The prize being handed out now (1, 2 or 3), or null once all are given.
+// The prize being handed out now (1 … PRIZES), or null once all are given.
 export const currentPrize = (state) => (state.winners.length < PRIZES ? state.winners.length + 1 : null);
 
 // Ranked, confirmed players, rank 1 first. Pass `limit` for a top-N.
