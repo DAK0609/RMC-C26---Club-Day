@@ -13,6 +13,10 @@ export const COPY = {
     ? "Congratulations! You're #1! 🏆 Come back to the Mind Club booth to claim your prize." // spec
     : `Congratulations! You won the ${COPY.place(prize)} prize! 🏆 Come back to the Mind Club booth to claim it.`),
   finishedRank: (rank) => `Thanks for playing! You finished #${rank}.`, // spec
+  comeToBooth: (name, prize) => "🏆 Come to the Mind Club booth now! If a winner isn't there, their prize goes to the next player in line."
+    + (name ? ` Now calling: ${name} for the ${COPY.place(prize)} prize.` : ''),
+  prizesDone: '🎉 All 3 prizes have been awarded.',
+  prizeReceived: (prize) => `🎉 You received the ${COPY.place(prize)} prize. Congratulations and thanks for playing!`,
   closed: 'Results are closed, so this entry can no longer be submitted. Thanks for playing!',
   ended: 'The game has ended. Thanks for visiting Mind Club!',
   entryRemoved: "We couldn't find your previous entry. Please enter a nickname to start again.",

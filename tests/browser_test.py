@@ -114,6 +114,8 @@ async def run(ids):
         report('Yes -> pet screen', await p.wait_for(f"{SCREEN} === 'pet'"))
         pet = await p.js(f"{g('pet-name')}.textContent")
         report('80 points -> Adult Pet', pet == 'Adult Pet', pet)
+        report('mini leaderboard shows the player, highlighted',
+               await p.wait_for("document.querySelector('#mini-board li.me')?.textContent.includes('(you)')"))
         report('pet screen shows no score', '80' not in await p.js("document.getElementById('pet').innerText"))
         await p.shot(SHOTS / 'p5-pet.png')
 
@@ -128,6 +130,8 @@ async def run(ids):
         secs = await b.wait_for("document.querySelector('#board li .name')?.textContent === 'zz_test_Live'", 14)
         report(f'leaderboard updates live without reload ({secs}s; polling alone would take up to 15s)',
                secs is not None and secs < 5, secs)
+        secs = await p.wait_for("document.querySelector('#mini-board li .name')?.textContent === 'zz_test_Live'", 10)
+        report(f'player mini leaderboard updates live ({secs}s)', secs is not None and secs < 6, secs)
         report('#1 row is highlighted with a crown',
                await b.js("document.querySelector('#board li').className === 'first' && document.querySelector('#board li .rank').textContent === '👑'"))
         await b.shot(SHOTS / 'b1-board.png')
@@ -156,6 +160,7 @@ async def run(ids):
         await p.wait_for(f"!{g('final')}.hidden", 10)
         text = await p.js(f"{g('final')}.textContent")
         report('other players see their rank', text.startswith('Thanks for playing! You finished #'), text)
+        report('other players are asked to come to the booth', 'Come to the Mind Club booth now' in text, text)
         report('unconfirmed player sees "results closed"', await d.wait_for(f"{SCREEN} === 'closed'", 10))
         await d.shot(SHOTS / 'p7-closed.png')
         report('leaderboard shows who to invite', await b.wait_for(f"{g('claim')}.textContent.includes('zz_test_Live')", 10))

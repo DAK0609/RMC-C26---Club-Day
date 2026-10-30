@@ -24,8 +24,8 @@ Three pages, each with its own link, sharing one live database:
 Scan QR → [1] Welcome + nickname → Start
         → play Game 1, 2, 3 at the booth (host tells the number)
         → [2] Enter 3 numbers → summary "Is this correct?" → Yes (locked forever) / Edit
-        → [3] Pet reveal (Baby / Teenager / Adult), no score or rank shown
-        → (keep the page open) at Finish: "Congratulations, you're #1!" or "You finished #12."
+        → [3] Pet reveal (Baby / Teenager / Adult) + live mini leaderboard (top 5 + own rank, no points)
+        → (keep the page open) at Finish: invited player gets "Congratulations!", everyone else "You finished #12. Come to the Mind Club booth now!"
 ```
 
 ### How the games map to the web inputs
@@ -107,7 +107,7 @@ Full app logic on a structure meant to be built on; UI is basic.
 2. ✅ Every screen and state: loading, welcome, results (game cards + pop-up), pet, final result, "results closed", "game has ended", entry removed
 3. ✅ Admin: live stats, Finish, Reopen (undo an accidental Finish), Prize given, Skip (safe if two people tap at once), Remove, confirm boxes
 4. ✅ Anti-cheat database rules written: `supabase/migrations/002_harden_player_writes.sql` (⏳ needs running in Supabase)
-5. ✅ Automated tests: `tests/api_test.py` (24 database checks) and `tests/browser_test.py` (42 checks playing a full event in a browser) — all pass (30 Oct, after the 3-prize change)
+5. ✅ Automated tests: `tests/api_test.py` (24 database checks) and `tests/browser_test.py` (45 checks playing a full event in a browser) — all pass (30 Oct, after the mini leaderboard)
 6. ✅ Three prizes (added 30 Oct): 1st, 2nd and 3rd are handed out in order. **Skip** passes the invited player over, so the next player in line moves up a prize (e.g. #1 absent → #2 gets 1st, #3 gets 2nd, #4 gets 3rd). Admin lists who got each prize. `supabase/migrations/003_three_prizes.sql` (✅ run in Supabase 30 Oct)
 
 ### Phase 2 — Branding & UI (≈4 hours) · Fri 30 – Sat 31 Oct
@@ -160,6 +160,8 @@ Full app logic on a structure meant to be built on; UI is basic.
 | Organiser removes a player | Everyone below moves up; that phone asks for a new nickname |
 | Organiser presses Finish by mistake | **Reopen** button: players can enter again, prize handout restarts from #1 and the 1st prize |
 | Two organisers tap Skip together | Only one player is skipped |
+| Finish pressed | Every ranked phone shows its rank + "Come to the Mind Club booth now!" and who is being called (prizes can move down the line); Android phones vibrate |
+| Player received a prize | Their phone says which prize they received |
 | Double tap on Start / Save / Yes | Button is disabled while saving, so only one entry is created |
 | Phone locked, Wi-Fi dropped | "Reconnecting…" bar; data reloads on wake-up / reconnect |
 
@@ -188,6 +190,7 @@ All rows above are covered by `tests/api_test.py` or `tests/browser_test.py`.
 | 3 | Duplicate nicknames | ✅ Not allowed: pop-up "This username has been taken. Please choose another one." (case-insensitive) |
 | 4 | Result screen layout | ✅ 3 tappable game cards (picture + "Game 1 · A Little In Common"), tap → pop-up with − / + number input; each game saves as a draft so progress survives closing the page |
 | 5 | Pet images | ✅ Cut from the banner → `img/pets/`; swap in Media's PNGs if they arrive |
+| 6 | Player sees their position | ✅ Mini leaderboard on the pet screen: top 5 + own row, **ranks only, no points** (30 Oct, replaces the spec's "no rank shown"). Updates live, at most every 3s per phone |
 
 ---
 

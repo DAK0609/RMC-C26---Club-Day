@@ -5,13 +5,15 @@ import { db } from './api.js';
 // connection (re)connects (events may have been missed), when the phone wakes up or
 // comes back online, and every `pollMs` as a safety net.
 // Runs never overlap: a burst of events during a run causes exactly one more run.
+// `minGapMs` spaces runs out, so a busy minute doesn't make every phone refetch per save.
 // `onConnection(ok)` is told whether the page is currently up to date.
 // Returns `run`, so a page can refresh right after its own actions. `await run()`
 // always waits for a refresh that started after the call, so the page never
 // re-enables buttons on data from before the action.
-export function keepFresh(refresh, { tables, pollMs = 30_000, onConnection = () => {} }) {
+export function keepFresh(refresh, { tables, pollMs = 30_000, minGapMs = 0, onConnection = () => {} }) {
   let current = null; // the refresh in progress
   let queued = null;  // the one extra refresh waiting for it
+  let lastStart = 0;
   let live = null; // null = still connecting, which isn't reported as a problem
   let fetchOk = true;
   const report = () => onConnection(live !== false && fetchOk);
@@ -26,6 +28,9 @@ export function keepFresh(refresh, { tables, pollMs = 30_000, onConnection = () 
       return queued;
     }
     current = (async () => {
+      const wait = lastStart + minGapMs - Date.now();
+      if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+      lastStart = Date.now();
       try {
         await refresh();
         fetchOk = true;

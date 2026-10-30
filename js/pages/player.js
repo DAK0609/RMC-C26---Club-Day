@@ -1,7 +1,7 @@
 // Player page (index.html): welcome → enter 3 games → pet → final result after Finish.
 import * as api from '../api.js';
 import { keepFresh } from '../live.js';
-import { $, showScreen, busy, toast, connectionBanner } from '../ui.js';
+import { $, el, showScreen, busy, toast, connectionBanner } from '../ui.js';
 import { GAMES } from '../games.js';
 import { petFor } from '../pets.js';
 import { COPY } from '../copy.js';
@@ -30,9 +30,13 @@ function forgetPlayer() {
 // ---- Page state ----
 let player = null;   // this player's row; null before they join
 let state = null;    // the event_state row
-let myRank = null;   // this player's leaderboard row, once the event is finished
+let myRank = null;   // this player's leaderboard row, once confirmed
+let top = [];        // the first MINI_TOP leaderboard rows, once confirmed
+let calling = null;  // after Finish: the leaderboard row invited for the current prize
 let editing = false; // true after "Edit": hide the summary until the next save
 let current = null;  // the game open in the pop-up
+
+const MINI_TOP = 5;
 
 async function refresh() {
   const [p, s] = await Promise.all([playerId ? api.getPlayer(playerId) : null, api.getState()]);
@@ -43,7 +47,11 @@ async function refresh() {
   }
   player = p;
   state = s;
-  myRank = s.finished && p?.confirmed_at ? await api.getMyRank(p.id) : null;
+  [myRank, top, calling] = p?.confirmed_at ? await Promise.all([
+    api.getMyRank(p.id),
+    api.getLeaderboard(MINI_TOP),
+    s.finished && api.currentPrize(s) ? api.getRankRow(s.winner_rank) : null,
+  ]) : [null, [], null];
   render();
 }
 
@@ -171,12 +179,13 @@ $('yes').onclick = () => busy($('yes'), async () => {
   try {
     player = await api.confirmResults(player.id, draft());
     render();
+    run(); // loads the mini leaderboard with this player in it
   } catch (err) {
     handleError(err);
   }
 });
 
-// ---- Screen 3: Pet (no score, rank or formula shown) ----
+// ---- Screen 3: Pet + mini leaderboard (ranks only, no score or formula shown) ----
 
 function renderPet() {
   const pet = petFor(player.total);
@@ -185,18 +194,56 @@ function renderPet() {
   $('pet-name').textContent = pet.name;
   $('pet-text').textContent = pet.text;
 
-  // After Finish: the player currently invited to claim the prize, or everyone else's rank.
-  const prize = api.currentPrize(state);
-  const isWinner = prize !== null && myRank?.rank === state.winner_rank;
-  $('final').hidden = !myRank;
-  $('final').classList.toggle('winner', isWinner);
-  if (myRank) $('final').textContent = isWinner ? COPY.winner(prize) : COPY.finishedRank(myRank.rank);
+  renderMiniBoard();
+  renderFinal();
   showScreen('pet');
 }
 
-// Phones only listen to event_state (Finish / Skip). Rank changes after a removal
-// arrive with the regular poll, which keeps 100+ phones from refetching on every save.
+// Top 5 by rank only (no points, per the spec), plus this player's own row if lower.
+function renderMiniBoard() {
+  const rows = [...top];
+  if (myRank && myRank.rank > MINI_TOP) {
+    if (myRank.rank > MINI_TOP + 1) rows.push(null); // null = "…" gap
+    rows.push(myRank);
+  }
+  $('mini-board').replaceChildren(...rows.map((r) => {
+    if (!r) return el('li', 'gap', '…');
+    const me = r.id === player.id;
+    const li = el('li', me ? 'me' : '');
+    li.append(
+      el('span', 'rank', r.rank === 1 ? '👑' : `#${r.rank}`),
+      el('span', 'name', me ? `${r.nickname} (you)` : r.nickname),
+    );
+    return li;
+  }));
+}
+
+// After Finish every ranked player is asked to come to the booth: if someone above
+// them isn't there, the prize moves down the line and could reach them.
+let buzzed = null; // the banner kind the phone last vibrated for
+function renderFinal() {
+  const prize = api.currentPrize(state);
+  const isWinner = prize !== null && myRank?.rank === state.winner_rank;
+  const won = state.winners.indexOf(player.id) + 1; // 1–3 if this player got a prize, else 0
+  $('final').hidden = !state.finished || !myRank;
+  if ($('final').hidden) {
+    buzzed = null;
+    return;
+  }
+  $('final').classList.toggle('winner', isWinner || won > 0);
+  $('final').textContent = isWinner ? COPY.winner(prize)
+    : won ? COPY.prizeReceived(won)
+    : `${COPY.finishedRank(myRank.rank)} ${prize ? COPY.comeToBooth(calling?.nickname, prize) : COPY.prizesDone}`;
+
+  const kind = isWinner ? 'invited' : 'finished';
+  if (buzzed !== kind) navigator.vibrate?.([200, 100, 200]); // Android only; ignored elsewhere
+  buzzed = kind;
+}
+
+// Phones listen to event_state (Finish / Skip / Prize given) and players (the mini
+// leaderboard). minGapMs keeps 100+ phones from refetching on every single save.
 const run = keepFresh(refresh, {
-  tables: ['event_state'],
+  tables: ['event_state', 'players'],
+  minGapMs: 3_000,
   onConnection: connectionBanner(COPY.reconnecting),
 });

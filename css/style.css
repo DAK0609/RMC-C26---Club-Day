@@ -35,6 +35,15 @@ label { display: block; text-align: left; margin: .6rem 0; }
 .notice { background: #fff; border: var(--outline); border-radius: 1rem; padding: .6rem; }
 .banner.winner { background: var(--pink); font-size: 1.15rem; }
 
+/* Mini leaderboard (pet screen) */
+.mini h3 { margin: 0 0 .4rem; }
+.mini ol { list-style: none; margin: 0; padding: 0; text-align: left; }
+.mini li { display: flex; gap: .8rem; padding: .3rem .6rem; border-radius: .6rem; }
+.mini li.me { background: var(--yellow); font-weight: 700; }
+.mini li.gap { justify-content: center; }
+.mini .rank { width: 2.5rem; }
+.mini .name { flex: 1; overflow-wrap: anywhere; }
+
 /* Status bars */
 .conn { position: sticky; top: 0; z-index: 10; margin: -1.5rem -1.5rem 1rem; padding: .4rem;
         background: var(--ink); color: #fff; font-size: .9rem; }
