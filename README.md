@@ -6,6 +6,13 @@ results on their phone, discover their virtual pet, and compete for a prize on a
 Plain HTML/CSS/JS (no build step) + Supabase (database + realtime). All on-screen text is English.
 Project plan and decisions: `PLAN.md`.
 
+**Live site (Vercel, updates on every push to `main`):**
+- Player (QR code target): https://mindchi.vercel.app
+- Leaderboard (iPad): https://mindchi.vercel.app/leaderboard.html
+- Admin: https://mindchi.vercel.app/admin.html
+
+`.vercelignore` keeps tests, database scripts, wireframes and dev tools off the public site.
+
 | Page | File | Used on |
 |---|---|---|
 | Player | `index.html` (QR code target) | Players' phones |

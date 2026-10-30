@@ -50,7 +50,7 @@ Scan QR → [1] Welcome + nickname → Start
 |---|---|---|
 | Frontend | Plain HTML + CSS + JS modules, no build step | Fewest moving parts; anyone in the club can edit it |
 | Database + realtime | Supabase (free tier) | Postgres + live updates + row security, nothing to host |
-| Hosting | GitHub Pages (this repo) | Free, HTTPS, deploys on `git push` |
+| Hosting | Vercel → **https://mindchi.vercel.app** | Free, HTTPS, works with the private repo, deploys on `git push` |
 | Font | Fredoka (Google Fonts) | Rounded and bubbly like the logo lettering |
 
 Free tier limits: 200 live connections and 500 MB storage, enough for 100+ players.
@@ -98,7 +98,7 @@ The banner already shows the 3 growth stages: **egg → small brain → brain wi
 ### Phase 1 — Setup (≈1 hour) · Thu 29 – Fri 30 Oct
 1. ✅ Create the Supabase project, run `supabase/schema.sql`
 2. ✅ Put the URL + publishable key into `js/config.js`
-3. ⏸ Deploy (GitHub Pages): postponed until the UI is ready. Code is pushed; repo is private.
+3. ✅ Deployed on Vercel (30 Oct): https://mindchi.vercel.app. The iPad's QR code points there automatically when the iPad opens the live leaderboard.
 4. ✅ Smoke test against the real database: join, drafts, confirm, lock, tie order, Finish, Skip, Remove, realtime
 
 ### Phase 1.5 — Core workflow ✅ (done 29 Oct)
@@ -197,7 +197,8 @@ All rows above are covered by `tests/api_test.py` or `tests/browser_test.py`.
 
 ## 8. Definition of done
 
-- [ ] 3 links live on GitHub Pages, QR code printed
+- [x] 3 links live on Vercel (mindchi.vercel.app)
+- [ ] QR code printed and test-scanned (iPhone + Android, on mobile data)
 - [ ] Player flow works on iPhone + Android, survives closing and reopening
 - [ ] Leaderboard updates within 2s of a submit, no reload needed
 - [ ] Finish → Skip → Prize given works end-to-end on real phones
