@@ -1,0 +1,9 @@
+# Not part of the public site: tests, database scripts, wireframes and local dev tools
+tests/
+supabase/
+design/
+description/
+serve.py
+start.bat
+PLAN.md
+README.md
